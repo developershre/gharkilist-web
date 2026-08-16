@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Link from 'next/link';
 
 export default function Hero() {
   const phoneRef = useRef<HTMLDivElement>(null);
@@ -55,7 +56,8 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.15s' }}>
               <a
-                href="#download"
+                href="/gharkilist.apk"
+                download
                 className="bg-emerald text-white font-semibold px-7 py-3 rounded-full hover:bg-emerald-light transition-all flex items-center justify-center gap-2 shadow-sm shadow-emerald/15 text-[15px]"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -65,7 +67,7 @@ export default function Hero() {
                 </svg>
                 Download APK v1.0 (Free)
               </a>
-              <a
+              <Link
                 href="#demo"
                 className="border border-black/10 text-slate font-semibold px-7 py-3 rounded-full hover:bg-black/[0.02] transition-all flex items-center justify-center gap-2 text-[15px]"
               >
@@ -73,7 +75,7 @@ export default function Hero() {
                   <polygon points="5 3 19 12 5 21 5 3"/>
                 </svg>
                 Try Interactive Demo
-              </a>
+              </Link>
             </div>
 
             <div className="mt-8 flex items-center gap-5 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.2s' }}>
@@ -93,11 +95,7 @@ export default function Hero() {
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-[18px] bg-slate rounded-b-xl z-10" />
                   <div className="p-3.5 pt-7 h-full flex flex-col">
                     <div className="flex items-center gap-2 mb-3">
-                      <div className="w-7 h-7 rounded-md bg-emerald flex items-center justify-center">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="text-white">
-                          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" strokeWidth="2.5"/>
-                        </svg>
-                      </div>
+                      <img src="/logo.svg" alt="Gharkilist" className="w-7 h-7" />
                       <span className="text-[11px] font-bold text-slate">ghark<span className="text-mint">i</span>list</span>
                     </div>
 

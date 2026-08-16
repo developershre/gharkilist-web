@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     description: "The Smart Household Pantry & Kirana List Manager for Indian Homes",
     type: "website",
   },
+  icons: {
+    icon:"/logo.svg"
+  }
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

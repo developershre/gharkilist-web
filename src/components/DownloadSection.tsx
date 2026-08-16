@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function DownloadSection() {
   return (
     <section id="download" className="relative">
@@ -19,12 +21,7 @@ export default function DownloadSection() {
           <div className="grid md:grid-cols-2 gap-5 max-w-4xl mx-auto">
             <div className="bg-cream rounded-2xl border border-black/[0.04] p-7">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-emerald flex items-center justify-center">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="text-white">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" strokeWidth="2"/>
-                    <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
-                </div>
+                <img src="/logo.svg" alt="Gharkilist" className="w-12 h-12" />
                 <div>
                   <h3 className="text-base font-bold text-slate tracking-[-0.01em]">Gharkilist</h3>
                   <span className="text-[13px] text-slate/35" style={{ fontFamily: 'var(--font-hindi)' }}>घर की लिस्ट</span>
@@ -45,14 +42,14 @@ export default function DownloadSection() {
                 ))}
               </div>
 
-              <button className="w-full bg-emerald text-white font-semibold py-3 rounded-xl hover:bg-emerald-light transition-all flex items-center justify-center gap-2 text-[14px] shadow-sm shadow-emerald/15">
+              <a href="/gharkilist.apk" download className="w-full bg-emerald text-white font-semibold py-3 rounded-xl hover:bg-emerald-light transition-all flex items-center justify-center gap-2 text-[14px] shadow-sm shadow-emerald/15">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
                 Download APK v1.0
-              </button>
+              </a>
             </div>
 
             <div className="bg-cream rounded-2xl border border-black/[0.04] p-7 flex flex-col items-center justify-center">
