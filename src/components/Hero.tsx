@@ -118,7 +118,7 @@ export default function Hero() {
               </span>
               <span className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-2 rounded-full border border-slate-100 shadow-2xs">
                 <CheckCircle2 className="w-4 h-4 text-mint" />
-                {lang === 'hi' ? 'हमेशा मुफ्त' : 'Free Forever'}
+                {lang === 'hi' ? 'कोई छिपा शुल्क नहीं' : 'No Hidden Fees'}
               </span>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function Hero() {
                       <div className="flex items-center gap-1.5">
                         <img src="/logo.svg" alt="Gharkilist Logo" className="w-5.5 h-5.5 object-contain" />
                         <div className="flex flex-col leading-none">
-                          <span className="text-[11px] font-extrabold text-slate">ghark<span className="text-mint">i</span>list</span>
+                          <span className="text-[11px] font-extrabold text-slate">gharki<span className="text-mint">list</span></span>
                           <span className="text-[8px] text-slate/40 font-semibold" style={{ fontFamily: 'var(--font-hindi)' }}>घर की लिस्ट</span>
                         </div>
                       </div>

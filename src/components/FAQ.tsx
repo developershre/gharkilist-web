@@ -11,8 +11,8 @@ export default function FAQ() {
     {
       q_en: 'Is Gharkilist completely free to use?',
       q_hi: 'क्या घर की लिस्ट ऐप पूरी तरह से मुफ़्त है?',
-      a_en: 'Yes! Gharkilist is 100% free forever with zero hidden fees, no subscriptions, and zero ad clutter.',
-      a_hi: 'हाँ! घर की लिस्ट पूरी तरह से मुफ़्त है। इसमें कोई छिपा हुआ शुल्क, कोई सदस्यता और कोई विज्ञापन नहीं है।',
+      a_en: 'Yes! Gharkilist is currently 100% free to download and use, with zero hidden fees, no subscriptions, and zero ad clutter.',
+      a_hi: 'हाँ! घर की लिस्ट वर्तमान में डाउनलोड और उपयोग करने के लिए 100% मुफ़्त है, जिसमें कोई छिपा हुआ शुल्क, कोई सदस्यता और कोई विज्ञापन नहीं है।',
     },
     {
       q_en: 'Does Gharkilist require an internet connection?',

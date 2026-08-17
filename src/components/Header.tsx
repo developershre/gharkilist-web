@@ -42,11 +42,8 @@ export default function Header() {
           <div className="flex flex-col leading-none">
             <div className="flex items-center gap-1.5">
               <span className="text-[16px] font-extrabold text-slate tracking-tight">
-                ghark<span className="text-mint">i</span>list
+                gharki<span className="text-mint">list</span>
               </span>
-              <Badge variant="mint" className="py-0 px-1.5 text-[9px] font-bold uppercase tracking-wider">
-                v1.0
-              </Badge>
             </div>
             <span
               className="text-[10px] font-semibold text-emerald tracking-wide mt-0.5"
