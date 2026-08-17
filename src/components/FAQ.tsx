@@ -1,83 +1,77 @@
 'use client';
 
-import { useState } from 'react';
-
-const faqs = [
-  {
-    question: 'Is Gharkilist completely free?',
-    answer: 'Yes, 100% free with no hidden fees, subscriptions, or in-app purchases.',
-  },
-  {
-    question: 'Does it need internet?',
-    answer: 'No. Your data is stored locally on your device using SQLite. No login, no cloud, no tracking.',
-  },
-  {
-    question: 'How does WhatsApp export work?',
-    answer: 'Select items, tap "Share on WhatsApp", and a formatted list with names, quantities, and prices is sent to your kirana store.',
-  },
-  {
-    question: 'Can I add custom items?',
-    answer: 'Yes. Create custom items with custom names, units (KG, G, L, ML, Packets), and prices. You can also scan photos or browse our 200+ product collection.',
-  },
-  {
-    question: 'Which languages are supported?',
-    answer: 'Every item has bilingual names — English and Hindi (हिन्दी) — making it easy for all family members to use.',
-  },
-  {
-    question: 'Is my data safe?',
-    answer: 'Absolutely. Gharkilist runs entirely on your device with zero internet. No servers, no analytics, no tracking.',
-  },
-];
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { lang } = useLanguage();
+
+  const faqs = [
+    {
+      q_en: 'Is Gharkilist completely free to use?',
+      q_hi: 'क्या घर की लिस्ट ऐप पूरी तरह से मुफ़्त है?',
+      a_en: 'Yes! Gharkilist is 100% free forever with zero hidden fees, no subscriptions, and zero ad clutter.',
+      a_hi: 'हाँ! घर की लिस्ट पूरी तरह से मुफ़्त है। इसमें कोई छिपा हुआ शुल्क, कोई सदस्यता और कोई विज्ञापन नहीं है।',
+    },
+    {
+      q_en: 'Does Gharkilist require an internet connection?',
+      q_hi: 'क्या ऐप चलाने के लिए इंटरनेट कनेक्शन आवश्यक है?',
+      a_en: 'No! Gharkilist is built 100% offline using a local SQLite database on your device. It works without Wi-Fi or mobile data.',
+      a_hi: 'नहीं! ऐप आपके डिवाइस पर लोकल SQLite डेटाबेस का उपयोग करता है। यह बिना इंटरनेट के 100% काम करता है।',
+    },
+    {
+      q_en: 'How does 1-Tap Kirana WhatsApp export work?',
+      q_hi: 'WhatsApp किराना एक्सपोर्ट सुविधा कैसे काम करती है?',
+      a_en: 'When you finish building your grocery list, tap "Share to Kirana". Gharkilist formats items, quantities, and estimated price in ₹ into a text message and opens WhatsApp automatically.',
+      a_hi: 'जब आपकी लिस्ट तैयार हो जाती है, "Share to Kirana" पर टैप करें। यह सामान, मात्रा और अनुमानित बजट को सुव्यवस्थित संदेश में बदलकर WhatsApp पर खोल देता है।',
+    },
+    {
+      q_en: 'Can I add custom items or custom units?',
+      q_hi: 'क्या मैं अपने खुद के सामान और इकाइयां जोड़ सकता हूं?',
+      a_en: 'Absolutely! While we pre-catalog 100+ standard Indian staples, you can add custom items with custom units (KG, G, L, ML, Packets, Pieces) anytime.',
+      a_hi: 'बिल्कुल! हालाँकि 100+ भारतीय वस्तुएं पूर्व-सूचीबद्ध हैं, आप अपनी पसंद के नए सामान और इकाइयां (किलो, ग्राम, लीटर, पैकेट) कभी भी जोड़ सकते हैं।',
+    },
+    {
+      q_en: 'Where is my pantry data stored?',
+      q_hi: 'मेरा डेटा कहाँ सहेजा जाता है?',
+      a_en: 'Your data never leaves your device. All inventories and budgets are stored 100% locally in your phone storage. Zero cloud servers, zero tracking.',
+      a_hi: 'आपका डेटा आपके फोन से बाहर कभी नहीं जाता। सभी सूचियां और बजट 100% स्थानीय रूप से सहेजे जाते हैं। कोई क्लाउड सर्वर नहीं, कोई ट्रैकिंग नहीं।',
+    },
+  ];
 
   return (
-    <section className="relative">
+    <section id="faq" className="relative">
       <div className="section-divider" />
-      <div className="py-20 md:py-28 bg-cream">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-20 md:py-28 bg-cream/50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <p className="text-[11px] font-semibold text-emerald uppercase tracking-[0.12em] mb-3">FAQ</p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate tracking-[-0.02em]">
-              Frequently Asked Questions
+            <Badge variant="saffron" className="mb-3 px-3 py-1 text-[11px] font-bold uppercase tracking-wider">
+              {lang === 'hi' ? 'सामान्य प्रश्न' : 'Frequently Asked Questions'}
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate tracking-tight mb-3">
+              {lang === 'hi' ? 'अक्सर पूछे जाने वाले सवाल' : 'Got Questions? We Have Answers.'}
             </h2>
+            <p className="text-base text-slate/50 max-w-md mx-auto leading-relaxed">
+              {lang === 'hi'
+                ? 'घर की लिस्ट ऐप से जुड़े मुख्य सवालों के जवाब यहाँ पाएँ।'
+                : 'Everything you need to know about privacy, offline storage, and WhatsApp ordering.'}
+            </p>
           </div>
 
-          <div className="space-y-1.5">
-            {faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="bg-white rounded-xl border border-black/[0.04] overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left"
-                >
-                  <span className="text-[13px] font-medium text-slate">{faq.question}</span>
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className={`text-slate/25 flex-shrink-0 transition-transform duration-200 ${openIndex === i ? 'rotate-180' : ''}`}
-                  >
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-200 ${
-                    openIndex === i ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
-                  }`}
-                >
-                  <div className="px-5 pb-4 text-[13px] text-slate/45 leading-relaxed">
-                    {faq.answer}
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="bg-white rounded-3xl border border-slate/10 p-6 sm:p-8 shadow-xl">
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, idx) => (
+                <AccordionItem key={idx} value={`item-${idx}`}>
+                  <AccordionTrigger className="text-base font-bold text-slate hover:text-emerald">
+                    {lang === 'hi' ? faq.q_hi : faq.q_en}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm text-slate/60 leading-relaxed">
+                    {lang === 'hi' ? faq.a_hi : faq.a_en}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </div>

@@ -1,87 +1,129 @@
 'use client';
 
-const comparisons = [
-  {
-    feature: 'Loose Staples (Atta/Dal by KG)',
-    generic: 'Fails (Requires barcode)',
-    gharkilist: 'Pre-cataloged with KG/G units',
-  },
-  {
-    feature: 'Bilingual Item Names',
-    generic: 'English only',
-    gharkilist: 'English + Hindi bilingual names',
-  },
-  {
-    feature: 'Kirana Ordering',
-    generic: 'Forces in-app checkout',
-    gharkilist: '1-Tap WhatsApp Export',
-  },
-  {
-    feature: 'Privacy & Internet',
-    generic: 'Requires login & tracking',
-    gharkilist: '100% Offline, Zero tracking',
-  },
-  {
-    feature: 'Pooja & Festival Needs',
-    generic: 'Not available',
-    gharkilist: 'Dedicated Pooja Category',
-  },
-];
+import { Check, X, ShieldAlert, Sparkles } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ComparisonMatrix() {
+  const { lang } = useLanguage();
+
+  const comparisonRows = [
+    {
+      feature_en: 'Loose Staples (Atta, Dals by KG/G)',
+      feature_hi: 'खुला सामान (आटा, दाल किलो/ग्राम में)',
+      generic_en: 'Fails (Requires barcode scan)',
+      generic_hi: 'विफल (बारकोड की आवश्यकता)',
+      gharkilist_en: '100% Pre-cataloged with KG/G units',
+      gharkilist_hi: '100% पूर्व-सूचीबद्ध (KG/G के साथ)',
+    },
+    {
+      feature_en: 'Bilingual Item Names',
+      feature_hi: 'द्विभाषी नाम (English + हिंदी)',
+      generic_en: 'English only',
+      generic_hi: 'केवल अंग्रेज़ी',
+      gharkilist_en: 'Bilingual (English + Hindi/हिन्दी)',
+      gharkilist_hi: 'द्विभाषी (English + हिंदी)',
+    },
+    {
+      feature_en: 'Local Kirana Ordering',
+      feature_hi: 'स्थानीय किराना ऑर्डरिंग',
+      generic_en: 'Forces unwanted online checkout',
+      generic_hi: 'ऑनलाइन चेकआउट का दबाव',
+      gharkilist_en: '1-Tap Formatted WhatsApp Export',
+      gharkilist_hi: '1-टैप में WhatsApp लिस्ट एक्सपोर्ट',
+    },
+    {
+      feature_en: 'Privacy & Internet Requirement',
+      feature_hi: 'प्राइवेसी और इंटरनेट की जरूरत',
+      generic_en: 'Requires online account & tracking',
+      generic_hi: 'अकाउंट व ट्रैकिंग अनिवार्य',
+      gharkilist_en: '100% Offline SQLite, Zero Tracking',
+      gharkilist_hi: '100% ऑफ़लाइन SQLite, ज़ीरो ट्रैकिंग',
+    },
+    {
+      feature_en: 'Indian Pooja & Festival Lists',
+      feature_hi: 'पूजा और त्योहारों की सूची',
+      generic_en: 'Not available',
+      generic_hi: 'उपलब्ध नहीं',
+      gharkilist_en: 'Dedicated Pooja & Festival Categories',
+      gharkilist_hi: 'समर्पित पूजा और त्योहार कैटगरी',
+    },
+  ];
+
   return (
     <section id="why" className="relative">
       <div className="section-divider" />
       <div className="py-20 md:py-28 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
-            <p className="text-[11px] font-semibold text-emerald uppercase tracking-[0.12em] mb-3">The Problem</p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate tracking-[-0.02em] mb-3">
-              Why Grocery Apps Don&apos;t Work Here
+            <Badge variant="saffron" className="mb-3 px-3 py-1 text-[11px] font-bold uppercase tracking-wider">
+              {lang === 'hi' ? 'तुलना तालिका' : 'Why Standard Apps Fail'}
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate tracking-tight mb-3">
+              {lang === 'hi' ? 'साधारण ग्रॉसरी ऐप बनाम घर की लिस्ट' : 'Why Generic Apps Fail Indian Kitchens'}
             </h2>
-            <p className="text-[15px] text-slate/45 max-w-md mx-auto leading-relaxed">
-              Western apps assume every product has a barcode. Indian kitchens don&apos;t.
+            <p className="text-base text-slate/50 max-w-md mx-auto leading-relaxed">
+              {lang === 'hi'
+                ? 'जानिए क्यों पश्चिमी बारकोड ऐप्स भारतीय रसोई के लिए बेकार साबित होते हैं।'
+                : 'Western barcode apps are designed for packaged supermarket goods, not Indian households.'}
             </p>
           </div>
 
-          <div className="hidden md:block rounded-2xl border border-black/[0.04] overflow-hidden bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
-            <div className="grid grid-cols-[1fr_1fr_1.1fr] text-[13px]">
-              <div className="px-5 py-3 font-semibold text-slate/50 border-b border-black/[0.04]">Feature</div>
-              <div className="px-5 py-3 font-semibold text-slate/50 border-b border-l border-black/[0.04] text-center">Generic Apps</div>
-              <div className="px-5 py-3 font-semibold text-white border-b border-l border-black/[0.04] text-center bg-emerald">Gharkilist</div>
-            </div>
-            {comparisons.map((row, i) => (
-              <div key={i} className={`grid grid-cols-[1fr_1fr_1.1fr] text-[13px] ${i < comparisons.length - 1 ? 'border-b border-black/[0.03]' : ''}`}>
-                <div className="px-5 py-3.5 font-medium text-slate flex items-center">{row.feature}</div>
-                <div className="px-5 py-3.5 flex items-center gap-2 border-l border-black/[0.04]">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0 opacity-70"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  <span className="text-slate/40">{row.generic}</span>
-                </div>
-                <div className="px-5 py-3.5 flex items-center gap-2 border-l border-black/[0.04] bg-emerald/[0.03]">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0F5132" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span className="font-medium text-emerald">{row.gharkilist}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Card className="overflow-hidden border-slate/15 shadow-xl bg-white">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[640px]">
+                <thead>
+                  <tr className="border-b border-slate/10 bg-slate-50/70 text-slate">
+                    <th className="py-4 px-6 font-extrabold text-sm w-1/3">
+                      {lang === 'hi' ? 'सुविधा' : 'Feature'}
+                    </th>
+                    <th className="py-4 px-6 font-bold text-sm text-slate/50 w-1/3">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldAlert className="w-4 h-4 text-amber-500" />
+                        {lang === 'hi' ? 'साधारण ऐप्स' : 'Generic Western Apps'}
+                      </span>
+                    </th>
+                    <th className="py-4 px-6 font-extrabold text-sm text-emerald bg-emerald/5 w-1/3">
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-emerald" />
+                        Gharkilist (घर की लिस्ट)
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate/10 text-sm">
+                  {comparisonRows.map((row, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-4 px-6 font-bold text-slate">
+                        {lang === 'hi' ? row.feature_hi : row.feature_en}
+                      </td>
 
-          <div className="md:hidden space-y-2.5">
-            {comparisons.map((row, i) => (
-              <div key={i} className="rounded-xl border border-black/[0.04] p-4 bg-white">
-                <div className="text-[13px] font-semibold text-slate mb-2.5 tracking-[-0.01em]">{row.feature}</div>
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-2">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" className="flex-shrink-0 opacity-70"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    <span className="text-[13px] text-slate/40">{row.generic}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0F5132" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span className="text-[13px] font-medium text-emerald">{row.gharkilist}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                      <td className="py-4 px-6 text-slate/60">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                            <X className="w-3 h-3" />
+                          </div>
+                          <span>{lang === 'hi' ? row.generic_hi : row.generic_en}</span>
+                        </div>
+                      </td>
+
+                      <td className="py-4 px-6 bg-emerald/[0.02] font-semibold text-slate">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-emerald text-white flex items-center justify-center flex-shrink-0">
+                            <Check className="w-3 h-3" />
+                          </div>
+                          <span className="text-emerald font-bold">
+                            {lang === 'hi' ? row.gharkilist_hi : row.gharkilist_en}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
         </div>
       </div>
     </section>

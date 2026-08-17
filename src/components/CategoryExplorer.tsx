@@ -1,154 +1,93 @@
 'use client';
 
 import { useState } from 'react';
-
-const categoryData = [
-  {
-    id: 'grains',
-    emoji: '🌾',
-    name: 'Grains & Atta',
-    hindi: 'अनाज और आटा',
-    items: [
-      { en: 'Whole Wheat Atta', hi: 'गेहूं का आटा', unit: '5 KG' },
-      { en: 'Basmati Rice', hi: 'बास्मती चावल', unit: '5 KG' },
-      { en: 'Maida (Refined Flour)', hi: 'मैदा', unit: '1 KG' },
-      { en: 'Sooji (Semolina)', hi: 'सूजी', unit: '500 G' },
-      { en: 'Poha (Flattened Rice)', hi: 'पोहा', unit: '500 G' },
-    ],
-  },
-  {
-    id: 'dals',
-    emoji: '🥣',
-    name: 'Dals & Pulses',
-    hindi: 'दालें',
-    items: [
-      { en: 'Toor / Arhar Dal', hi: 'तूर / अरहर दाल', unit: '1 KG' },
-      { en: 'Moong Dal', hi: 'मूंग दाल', unit: '1 KG' },
-      { en: 'Chana Dal', hi: 'चना दाल', unit: '1 KG' },
-      { en: 'Rajma (Kidney Beans)', hi: 'राजमा', unit: '500 G' },
-      { en: 'Kabuli Chana', hi: 'काबुली चना', unit: '500 G' },
-    ],
-  },
-  {
-    id: 'spices',
-    emoji: '🌶️',
-    name: 'Spices & Masala',
-    hindi: 'मसाले',
-    items: [
-      { en: 'Haldi (Turmeric)', hi: 'हल्दी', unit: '200 G' },
-      { en: 'Lal Mirch (Red Chili)', hi: 'लाल मिर्च', unit: '200 G' },
-      { en: 'Dhaniya Powder', hi: 'धनिया पाउडर', unit: '100 G' },
-      { en: 'Garam Masala', hi: 'गरम मसाला', unit: '50 G' },
-      { en: 'Mustard Seeds', hi: 'राई', unit: '100 G' },
-    ],
-  },
-  {
-    id: 'oils',
-    emoji: '🛢️',
-    name: 'Oils & Ghee',
-    hindi: 'तेल और घी',
-    items: [
-      { en: 'Desi Ghee', hi: 'देसी घी', unit: '500 ML' },
-      { en: 'Mustard Oil', hi: 'सरसों का तेल', unit: '1 L' },
-      { en: 'Sunflower Oil', hi: 'सूरजमुखी तेल', unit: '1 L' },
-      { en: 'Refined Oil', hi: 'रिफाइंड तेल', unit: '1 L' },
-    ],
-  },
-  {
-    id: 'pooja',
-    emoji: '🪔',
-    name: 'Pooja Needs',
-    hindi: 'पूजा सामग्री',
-    items: [
-      { en: 'Camphor (Kapur)', hi: 'भीमसेनी कपूर', unit: '1 PKT' },
-      { en: 'Agarbatti (Incense)', hi: 'अगरबत्ती', unit: '2 PKT' },
-      { en: 'Diya Oil', hi: 'दीया का तेल', unit: '500 ML' },
-      { en: 'Cotton Wicks', hi: 'रूई बत्ती', unit: '1 PKT' },
-      { en: 'Roli / Kumkum', hi: 'रोली / कुमकुम', unit: '1 PKT' },
-    ],
-  },
-  {
-    id: 'dairy',
-    emoji: '🥛',
-    name: 'Dairy & Bakery',
-    hindi: 'दूध और बेकरी',
-    items: [
-      { en: 'Fresh Milk', hi: 'ताज़ा दूध', unit: '1 L' },
-      { en: 'Paneer', hi: 'पनीर', unit: '200 G' },
-      { en: 'Curd / Dahi', hi: 'दही', unit: '400 G' },
-      { en: 'Butter', hi: 'मक्खन', unit: '100 G' },
-      { en: 'Bread', hi: 'ब्रेड', unit: '1 PKT' },
-    ],
-  },
-];
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { CATEGORIES, INDIAN_PANTRY_CATALOG } from '@/lib/data';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function CategoryExplorer() {
-  const [activeTab, setActiveTab] = useState('grains');
-  const activeCategory = categoryData.find((c) => c.id === activeTab) || categoryData[0];
+  const { lang } = useLanguage();
+  const explorerCategories = CATEGORIES.filter((c) => c.id !== 'all');
 
   return (
-    <section className="relative">
+    <section id="categories" className="relative">
       <div className="section-divider" />
-      <div className="py-20 md:py-28 bg-cream">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="py-20 md:py-28 bg-cream/40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <p className="text-[11px] font-semibold text-emerald uppercase tracking-[0.12em] mb-3">Catalog</p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate tracking-[-0.02em] mb-3">
-              Explore Our Pantry Catalog
+            <Badge variant="mint" className="mb-3 px-3 py-1 text-[11px] font-bold uppercase tracking-wider">
+              {lang === 'hi' ? 'भारतीय पेंट्री एक्सप्लोरर' : 'Catalog Explorer'}
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate tracking-tight mb-3">
+              {lang === 'hi' ? 'भारतीय रसोई का संपूर्ण कैटलॉग' : 'Explore Indian Pantry Categories'}
             </h2>
-            <p className="text-[15px] text-slate/45 max-w-md mx-auto leading-relaxed">
-              100+ pre-filled items with bilingual names in English and Hindi.
+            <p className="text-base text-slate/50 max-w-md mx-auto leading-relaxed">
+              {lang === 'hi'
+                ? 'अनाज, दालों, मसालों से लेकर पूजा सामग्री तक हर वस्तु की द्विभाषी सूची देखिये।'
+                : 'Discover pre-filled items with authentic English and Hindi names across all 6 Indian household categories.'}
             </p>
           </div>
 
-          <div className="flex gap-1.5 overflow-x-auto pb-2 mb-8 justify-start lg:justify-center scrollbar-hide">
-            {categoryData.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveTab(cat.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[13px] font-medium whitespace-nowrap transition-all duration-200 ${
-                  activeTab === cat.id
-                    ? 'bg-emerald text-white shadow-sm shadow-emerald/15'
-                    : 'bg-white text-slate/50 border border-black/[0.06] hover:border-emerald/25 hover:text-emerald'
-                }`}
-              >
-                <span className="text-sm">{cat.emoji}</span>
-                {cat.name}
-              </button>
-            ))}
-          </div>
-
-          <div className="bg-white rounded-2xl border border-black/[0.04] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-            <div className="px-6 sm:px-8 py-5 border-b border-black/[0.04]">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{activeCategory.emoji}</span>
-                <div>
-                  <h3 className="text-base font-bold text-slate tracking-[-0.01em]">{activeCategory.name}</h3>
-                  <span className="text-[13px] text-slate/35" style={{ fontFamily: 'var(--font-hindi)' }}>{activeCategory.hindi}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 sm:p-6">
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1">
-                {activeCategory.items.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-black/[0.02] transition-colors"
+          <Tabs defaultValue="grains" className="w-full">
+            <div className="flex justify-center mb-8 overflow-x-auto pb-2">
+              <TabsList className="bg-white border border-slate/10 p-1.5 rounded-2xl shadow-sm">
+                {explorerCategories.map((cat) => (
+                  <TabsTrigger
+                    key={cat.id}
+                    value={cat.id}
+                    className="gap-2 px-4 py-2 text-xs font-bold rounded-xl data-[state=active]:bg-emerald data-[state=active]:text-white transition-all"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-emerald/[0.05] flex items-center justify-center text-sm flex-shrink-0">
-                      {activeCategory.emoji}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-[13px] font-medium text-slate truncate">{item.en}</div>
-                      <div className="text-[11px] text-slate/35" style={{ fontFamily: 'var(--font-hindi)' }}>{item.hi}</div>
-                    </div>
-                    <span className="text-[10px] font-medium text-slate/30 bg-black/[0.03] px-2 py-0.5 rounded-full whitespace-nowrap">{item.unit}</span>
-                  </div>
+                    <span>{cat.icon}</span>
+                    <span>{lang === 'hi' ? cat.label_hi : cat.label_en}</span>
+                  </TabsTrigger>
                 ))}
-              </div>
+              </TabsList>
             </div>
-          </div>
+
+            {explorerCategories.map((cat) => {
+              const catItems = INDIAN_PANTRY_CATALOG.filter((item) =>
+                item.category.toLowerCase().includes(cat.id)
+              );
+
+              return (
+                <TabsContent key={cat.id} value={cat.id} className="focus:outline-none">
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {catItems.map((item) => (
+                      <Card
+                        key={item.id}
+                        className="bg-white border-slate/10 hover:border-emerald/30 hover:shadow-md transition-all p-4 flex items-center gap-3.5 group"
+                      >
+                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform flex-shrink-0">
+                          {item.icon}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-sm font-bold text-slate truncate group-hover:text-emerald transition-colors">
+                            {item.name_en}
+                          </h4>
+                          <p
+                            className="text-xs text-slate/50 font-medium truncate mt-0.5"
+                            style={{ fontFamily: 'var(--font-hindi)' }}
+                          >
+                            {item.name_hi}
+                          </p>
+                          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate/5">
+                            <span className="text-[10px] font-semibold text-slate/40 uppercase">
+                              Standard: {item.default_qty} {item.unit}
+                            </span>
+                            <span className="text-xs font-extrabold text-emerald">
+                              ₹{Math.round(item.price_per_unit * item.default_qty)}
+                            </span>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                </TabsContent>
+              );
+            })}
+          </Tabs>
         </div>
       </div>
     </section>
