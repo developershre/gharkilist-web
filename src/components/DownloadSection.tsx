@@ -118,11 +118,9 @@ export default function DownloadSection() {
                     : 'Point your camera to scan QR code and open direct download link'}
                 </p>
 
-                {/* Simulated QR Code Box */}
-                <div className="w-40 h-40 bg-slate-900 rounded-2xl p-3 border-4 border-emerald/20 flex items-center justify-center shadow-md mb-3">
-                  <svg className="w-full h-full text-white" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm11-2h7v7h-7V2zm2 2v3h3V4h-3zM2 15h7v7H2v-7zm2 2v3h3v-3H4zm13-2h3v3h-3v-3zm0 4h5v3h-5v-3zm-4-4h2v7h-2v-7zm2-2h5v2h-5v-2zM8 8h1v1H8V8zm1 1h1v1H9V9zm-2 0h1v1H7V9zm3-3h1v1h-1V6zm0 3h1v1h-1V9z" />
-                  </svg>
+                {/* Actual QR Code Box */}
+                <div className="w-40 h-40 bg-white rounded-2xl p-2 border-4 border-emerald/20 flex items-center justify-center shadow-md mb-3 overflow-hidden">
+                  <img src="/qr.png" alt="Gharkilist Download QR Code" className="w-full h-full object-contain" />
                 </div>
                 <Badge variant="outline" className="text-[10px] text-slate/60">
                   direct link: gharkilist app
