@@ -112,7 +112,7 @@ A tabbed visual showcase of categories where users can explore items with their 
 ### 7. Download & Release Card Section
 - **Download Box**:
   - Version: `v1.0.0 (First Testing Release)`
-  - Size: `~12.4 MB`
+  - Size: `~59 MB`
   - Requirement: `Android 7.0+`
   - Direct Download Button (`.apk`)
   - **QR Code Card**: Scan QR code to download directly on smartphone.

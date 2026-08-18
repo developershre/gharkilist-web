@@ -76,7 +76,7 @@ export default function DownloadSection() {
                 <div className="grid grid-cols-3 gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 text-center">
                   <div>
                     <span className="text-[10px] text-slate-400 uppercase font-semibold block">File Size</span>
-                    <span className="text-sm sm:text-base font-extrabold text-white">~12.4 MB</span>
+                    <span className="text-sm sm:text-base font-extrabold text-white">~59 MB</span>
                   </div>
                   <div className="border-x border-white/10">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold block">Requirement</span>
