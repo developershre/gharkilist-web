@@ -51,7 +51,7 @@ export default function Hero() {
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          
+
           {/* Left Column: Headings & CTA Actions */}
           <div className="lg:col-span-7 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 bg-emerald/[0.07] border border-emerald/20 rounded-full px-4.5 py-1.5 mb-6 animate-slide-up shadow-xs">
@@ -91,7 +91,7 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.15s' }}>
               <Button size="lg" variant="emerald" asChild className="gap-2.5 bg-[#03B459] hover:bg-[#03B459]/90 shadow-lg shadow-emerald/20 text-base font-bold py-6 px-8 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-                <a href="/gharkilist.apk" download>
+                <a href="/GharKiList-v1.0.1.apk" download>
                   <Download className="w-5 h-5" />
                   <span>{lang === 'hi' ? 'ऐप डाउनलोड करें (मुफ्त)' : 'Download Free App'}</span>
                 </a>
@@ -123,16 +123,16 @@ export default function Hero() {
 
           {/* Right Column: Redesigned Dual Preview Mockup Hub */}
           <div className="lg:col-span-5 relative flex justify-center w-full mt-8 lg:mt-0">
-            <div 
-              ref={phoneRef} 
+            <div
+              ref={phoneRef}
               className="relative w-full max-w-[340px] sm:max-w-[420px] transition-all duration-300 ease-out select-none"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              
+
               {/* iPhone App Screen Simulator (Recreated from actual app screenshot) */}
               <div className="relative z-10 mr-12 sm:mr-16">
                 <IPhoneMockup height="h-[520px] sm:h-[580px]">
-                  
+
                   {/* Status Bar */}
                   <div className="pt-3 px-6 pb-1 bg-white text-slate-800 flex items-center justify-between text-[10px] font-bold select-none z-30">
                     <span className="font-semibold">2:56</span>
@@ -145,7 +145,7 @@ export default function Hero() {
 
                   {/* App Screen Display */}
                   <div className="w-full h-full bg-white flex flex-col p-3.5 pt-2">
-                    
+
                     {/* Phone Header - Identical to Screenshot */}
                     <div className="flex items-center justify-between mb-2.5 pb-1">
                       <div className="flex items-center gap-2">
@@ -187,30 +187,30 @@ export default function Hero() {
                     {/* Item Cards - Recreated with Real App Layout */}
                     <div className="flex-1 space-y-2.5 overflow-hidden">
                       {[
-                        { 
-                          name: 'Basmati Rice', 
-                          qty: '1 kg', 
-                          img: true, 
-                          imgColor: 'bg-amber-50' 
+                        {
+                          name: 'Basmati Rice',
+                          qty: '1 kg',
+                          img: true,
+                          imgColor: 'bg-amber-50'
                         },
-                        { 
-                          name: 'Flattened Rice', 
-                          qty: '1 g', 
-                          img: false, 
-                          imgColor: 'bg-amber-500/10' 
+                        {
+                          name: 'Flattened Rice',
+                          qty: '1 g',
+                          img: false,
+                          imgColor: 'bg-amber-500/10'
                         },
-                        { 
-                          name: 'Fortune Mustard Oil', 
-                          qty: '1 L', 
-                          img: true, 
-                          imgColor: 'bg-yellow-50' 
+                        {
+                          name: 'Fortune Mustard Oil',
+                          qty: '1 L',
+                          img: true,
+                          imgColor: 'bg-yellow-50'
                         },
                       ].map((item, idx) => (
                         <div key={idx} className="bg-white rounded-2xl p-2.5 border border-slate-150 flex items-center justify-between shadow-2xs">
                           <div className="flex items-center gap-2.5 min-w-0">
                             {/* Reorder drag handle */}
                             <GripVertical className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                            
+
                             {/* Product preview box */}
                             <div className={`w-9 h-9 rounded-xl ${item.imgColor} border border-slate-100 flex items-center justify-center text-xs flex-shrink-0 overflow-hidden`}>
                               {item.img ? (
@@ -222,7 +222,7 @@ export default function Hero() {
                                 <span className="text-sm">🌾</span>
                               )}
                             </div>
-                            
+
                             <div className="min-w-0">
                               <div className="text-[10.5px] font-bold text-slate-800 truncate font-sans">{item.name}</div>
                               <div className="text-[8.5px] text-slate-400 font-sans mt-0.5">{item.qty}</div>
@@ -246,7 +246,7 @@ export default function Hero() {
                     <div className="mt-2.5 pt-2 border-t border-slate-100 flex gap-2">
                       <div id="whatsapp-btn" className="flex-1 bg-[#03B459] hover:bg-[#03B459]/90 rounded-xl py-2 px-3 flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-colors duration-150 active:scale-98">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="white" className="flex-shrink-0">
-                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                         </svg>
                         <span className="text-white text-[9.5px] font-bold font-sans">Share On WhatsApp</span>
                       </div>
@@ -260,7 +260,7 @@ export default function Hero() {
               </div>
 
               {/* Responsive Popping WhatsApp Message Card (Right Overlay) */}
-              <div 
+              <div
                 className="absolute right-[-10px] sm:right-[-12px] lg:right-[-32px] top-[26%] w-[190px] sm:w-[220px] bg-white rounded-2xl shadow-[0_20px_50px_-8px_rgba(15,81,50,0.15),0_10px_20px_-5px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden z-20 animate-pulse-subtle font-sans"
                 style={{ transform: 'translateZ(30px)' }} // Adds physical 3D separation
               >
@@ -282,7 +282,7 @@ export default function Hero() {
                   <div className="bg-[#DCF8C6] text-slate-800 rounded-lg p-2 shadow-2xs text-[9px] leading-relaxed relative self-end max-w-[95%] border-r-2 border-[#DCF8C6] shadow-xs">
                     {/* Bubble tail */}
                     <div className="absolute top-0 right-[-5px] w-0 h-0 border-t-[6px] border-t-[#DCF8C6] border-r-[6px] border-r-transparent" />
-                    
+
                     <div className="font-bold text-emerald-800 text-[9px] mb-0.5">🛒 Gharkilist — {lang === 'hi' ? 'मासिक सूची' : 'Monthly List'}</div>
                     <div className="h-[0.5px] bg-emerald-800/10 my-1" />
                     <div className="space-y-0.5 font-mono text-[8.5px]">
@@ -304,9 +304,9 @@ export default function Hero() {
               </div>
 
               {/* Curved SVG connector arrow showing instant export (Desktop Only) */}
-              <svg 
-                className="absolute inset-0 w-full h-full pointer-events-none z-20 hidden lg:block overflow-visible" 
-                viewBox="0 0 400 550" 
+              <svg
+                className="absolute inset-0 w-full h-full pointer-events-none z-20 hidden lg:block overflow-visible"
+                viewBox="0 0 400 550"
                 fill="none"
               >
                 {/* Curved dashed arrow path from phone's WhatsApp button to WhatsApp chat card */}
@@ -328,7 +328,7 @@ export default function Hero() {
               </svg>
 
               {/* Float badge along the curve */}
-              <div 
+              <div
                 className="absolute right-[85px] bottom-[150px] bg-[#03B459] text-white text-[8px] font-black px-2.5 py-1 rounded-full shadow-md z-30 tracking-wider uppercase border border-white/20 animate-bounce-subtle hidden lg:block"
                 style={{ transform: 'translateZ(15px)' }}
               >
@@ -337,7 +337,7 @@ export default function Hero() {
 
               {/* Ambient Floating Badges around the phone */}
               {/* Badge 1 (Left Side) */}
-              <div 
+              <div
                 className="absolute left-[-24px] sm:left-[-40px] top-[14%] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-lg border border-slate-100 hidden sm:block animate-pulse-subtle z-30"
                 style={{ transform: 'translateZ(20px)' }}
               >
@@ -353,7 +353,7 @@ export default function Hero() {
               </div>
 
               {/* Badge 2 (Bottom Left Side) */}
-              <div 
+              <div
                 className="absolute left-[-32px] sm:left-[-48px] bottom-[12%] bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-lg border border-slate-100 hidden sm:block animate-pulse-subtle z-30"
                 style={{ animationDelay: '1.2s', transform: 'translateZ(10px)' }}
               >

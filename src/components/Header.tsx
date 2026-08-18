@@ -28,11 +28,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
           ? 'bg-white/85 backdrop-blur-md border-b border-slate/10 shadow-xs py-3'
           : 'bg-transparent py-5'
-      }`}
+        }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <a href="#" className="flex items-center gap-2.5 group">
@@ -79,7 +78,7 @@ export default function Header() {
           </Button>
 
           <Button variant="emerald" size="sm" asChild className="gap-2 shadow-sm shadow-emerald/20">
-            <a href="/gharkilist.apk" download>
+            <a href="/GharKiList-v1.0.1.apk" download>
               <Download className="w-4 h-4" />
               <span>{lang === 'hi' ? 'ऐप डाउनलोड करें' : 'Download App'}</span>
             </a>
@@ -121,7 +120,7 @@ export default function Header() {
           ))}
           <div className="pt-2 border-t border-slate/10">
             <Button variant="emerald" size="default" asChild className="w-full justify-center gap-2">
-              <a href="/gharkilist.apk" download onClick={() => setMobileOpen(false)}>
+              <a href="/GharKiList-v1.0.1.apk" download onClick={() => setMobileOpen(false)}>
                 <Download className="w-4 h-4" />
                 <span>{lang === 'hi' ? 'ऐप डाउनलोड करें' : 'Download Free App'}</span>
               </a>

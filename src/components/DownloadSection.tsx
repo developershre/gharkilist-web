@@ -90,7 +90,7 @@ export default function DownloadSection() {
 
                 <div className="space-y-3">
                   <Button variant="emerald" size="lg" asChild className="w-full justify-center gap-3 py-6 text-base font-bold shadow-xl shadow-emerald/30">
-                    <a href="/gharkilist.apk" download>
+                    <a href="/GharKiList-v1.0.1.apk" download>
                       <Download className="w-5 h-5" />
                       <span>{lang === 'hi' ? 'एंड्रॉइड ऐप डाउनलोड करें (v1.0)' : 'Download Android App v1.0.0'}</span>
                     </a>
