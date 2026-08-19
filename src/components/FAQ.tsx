@@ -38,6 +38,12 @@ export default function FAQ() {
       a_en: 'Your data never leaves your device. All inventories and budgets are stored 100% locally in your phone storage. Zero cloud servers, zero tracking.',
       a_hi: 'आपका डेटा आपके फोन से बाहर कभी नहीं जाता। सभी सूचियां और बजट 100% स्थानीय रूप से सहेजे जाते हैं। कोई क्लाउड सर्वर नहीं, कोई ट्रैकिंग नहीं।',
     },
+    {
+      q_en: 'What does "Beta Testing Phase" mean?',
+      q_hi: 'पब्लिक बीटा टेस्टिंग का क्या अर्थ है?',
+      a_en: 'Gharkilist is currently in its public beta testing phase. This means the app features are fully functional, but we are actively collecting feedback to optimize performance and squash any remaining bugs before the official production release.',
+      a_hi: 'घर की लिस्ट अभी पब्लिक बीटा टेस्टिंग के चरण में है। इसका मतलब है कि ऐप पूरी तरह से काम कर रहा है, लेकिन आधिकारिक रिलीज से पहले प्रदर्शन को बेहतर बनाने और बग्स को ठीक करने के लिए हम उपयोगकर्ताओं से प्रतिक्रिया एकत्र कर रहे हैं।',
+    },
   ];
 
   return (

@@ -1,26 +1,77 @@
 'use client';
 
-import { Download, QrCode, Smartphone, CheckCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Download, QrCode, ShieldCheck, ChevronDown, ChevronUp, Calendar, FileDown } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/context/LanguageContext';
 
+interface ApkRelease {
+  url: string;
+  pathname: string;
+  size: number;
+  uploadedAt: string;
+  version: string;
+  isFallback: boolean;
+}
+
 export default function DownloadSection() {
   const { lang } = useLanguage();
+  const [apks, setApks] = useState<ApkRelease[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showOlder, setShowOlder] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/apks')
+      .then((res) => res.json())
+      .then((data) => {
+        setApks(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching APK list:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  // Determine latest APK, fallback to default meta if loading or empty
+  const latestApk = apks[0] || {
+    url: '/api/apks/latest',
+    pathname: 'GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
+    size: 22031124,
+    uploadedAt: new Date('2026-08-19T22:48:00Z').toISOString(),
+    version: '0.0.6',
+    isFallback: true,
+  };
+
+  const formatSize = (bytes: number) => {
+    if (bytes <= 0) return 'GitHub';
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(1)} MB`;
+  };
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
 
   const installSteps = [
     {
       step: '01',
       title_en: 'Download App',
       title_hi: 'ऐप डाउनलोड करें',
-      desc_en: 'Click the download button to save the ~59 MB Android App file to your phone.',
-      desc_hi: 'अपने फोन पर ~59 MB की एंड्रॉइड ऐप सहेजने के लिए बटन पर क्लिक करें।',
+      desc_en: `Click the download button to save the ~${formatSize(latestApk.size)} Android App file to your phone.`,
+      desc_hi: `अपने फोन पर ~${formatSize(latestApk.size)} की एंड्रॉइड ऐप सहेजने के लिए बटन पर क्लिक करें।`,
     },
     {
       step: '02',
       title_en: 'Allow Unknown Sources',
-      title_hi: 'अज्ञात स्रोतों की अनुमति दें',
+      title_hi: 'अअज्ञात स्रोतों की अनुमति दें',
       desc_en: 'If prompted by Android, enable "Install from Unknown Sources" in your browser settings.',
       desc_hi: 'यदि एंड्रॉइड द्वारा कहा जाए, तो ब्राउज़र सेटिंग्स में "Unknown Sources" की अनुमति दें।',
     },
@@ -32,6 +83,9 @@ export default function DownloadSection() {
       desc_hi: 'बिना किसी पंजीकरण या इंटरनेट के अपनी रसोई सूची और किराना ऑर्डर संभालें!',
     },
   ];
+
+  // Get older versions (all apks except the first/latest one)
+  const olderApks = apks.slice(1);
 
   return (
     <section id="download" className="relative">
@@ -55,7 +109,7 @@ export default function DownloadSection() {
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Release Spec & Download Card */}
             <div className="lg:col-span-7">
-              <Card className="bg-linear-to-br from-slate-900 via-slate-900 to-emerald-950 text-white border-none shadow-2xl p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+              <Card className="bg-linear-to-br from-slate-900 via-slate-900 to-emerald-950 text-white border-none shadow-2xl p-6 sm:p-8 rounded-3xl relative overflow-hidden animate-fadeIn">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-mint/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -65,18 +119,22 @@ export default function DownloadSection() {
                     </div>
                     <div>
                       <h3 className="text-xl font-extrabold tracking-tight">Gharkilist (घर की लिस्ट)</h3>
-                      <p className="text-xs text-slate-300">Android Application &middot; Testing Release</p>
+                      <p className="text-xs text-slate-300">
+                        {lang === 'hi' ? 'एंड्रॉइड एप्लीकेशन · परीक्षण रिलीज़' : 'Android Application · Testing Release'}
+                      </p>
                     </div>
                   </div>
-                  <Badge variant="saffron" className="px-3 py-1 font-extrabold text-xs">
-                    v1.0.0 Stable
+                  <Badge variant="saffron" className="px-3 py-1 font-extrabold text-xs animate-pulse">
+                    {loading ? 'v0.0.6 Beta (Testing)' : `v${latestApk.version} Beta (Testing)`}
                   </Badge>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 text-center">
                   <div>
                     <span className="text-[10px] text-slate-400 uppercase font-semibold block">File Size</span>
-                    <span className="text-sm sm:text-base font-extrabold text-white">~59 MB</span>
+                    <span className="text-sm sm:text-base font-extrabold text-white">
+                      {loading ? '~58.6 MB' : formatSize(latestApk.size)}
+                    </span>
                   </div>
                   <div className="border-x border-white/10">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold block">Requirement</span>
@@ -89,16 +147,38 @@ export default function DownloadSection() {
                 </div>
 
                 <div className="space-y-3">
-                  <Button variant="emerald" size="lg" asChild className="w-full justify-center gap-3 py-6 text-base font-bold shadow-xl shadow-emerald/30">
-                    <a href="/GharKiList-v1.0.1.apk" download>
-                      <Download className="w-5 h-5" />
-                      <span>{lang === 'hi' ? 'एंड्रॉइड ऐप डाउनलोड करें (v1.0)' : 'Download Android App v1.0.0'}</span>
+                  <Button variant="emerald" size="lg" asChild className="w-full justify-center gap-3 py-6 text-base font-bold shadow-xl shadow-emerald/30 hover:scale-[1.01] transition-transform">
+                    <a href="/api/apks/latest">
+                      <Download className="w-5 h-5 animate-bounce" />
+                      <span>
+                        {lang === 'hi' 
+                          ? `एंड्रॉइड ऐप डाउनलोड करें (v${latestApk.version})` 
+                          : `Download Android App v${latestApk.version}`}
+                      </span>
                     </a>
                   </Button>
                   <p className="text-[11px] text-center text-slate-400 flex items-center justify-center gap-1.5 pt-1">
                     <ShieldCheck className="w-4 h-4 text-mint" />
                     <span>Scanned with Google Play Protect &middot; Safe & Verified App</span>
                   </p>
+
+                  <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
+                    <span className="text-[10px] text-slate-400 font-semibold uppercase block text-center">
+                      {lang === 'hi' ? 'अन्य डिवाइस आर्किटेक्चर (v0.0.6):' : 'Other Device Architectures (v0.0.6):'}
+                    </span>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      <Button variant="outline" size="sm" asChild className="text-[11px] font-bold bg-white/5 border-white/10 hover:bg-white/10 hover:text-white rounded-xl text-slate-300 hover:border-emerald/40 transition-colors">
+                        <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
+                          {lang === 'hi' ? 'पुराने फोन (32-bit)' : 'Older Phones (32-bit)'}
+                        </a>
+                      </Button>
+                      <Button variant="outline" size="sm" asChild className="text-[11px] font-bold bg-white/5 border-white/10 hover:bg-white/10 hover:text-white rounded-xl text-slate-300 hover:border-emerald/40 transition-colors">
+                        <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
+                          {lang === 'hi' ? 'पीसी / एमुलेटर (x86_64)' : 'PC / Emulator (x86_64)'}
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </Card>
             </div>
@@ -128,6 +208,122 @@ export default function DownloadSection() {
               </Card>
             </div>
           </div>
+
+          {/* Beta Testing Feedback Callout */}
+          <div className="mt-12 bg-emerald/[0.03] border border-emerald/10 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 animate-fadeIn">
+            <div className="space-y-2 text-center md:text-left">
+              <Badge variant="saffron" className="px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-600 border-amber-500/20">
+                {lang === 'hi' ? 'फीडबैक आवश्यक' : 'Feedback Wanted'}
+              </Badge>
+              <h4 className="text-base font-extrabold text-slate">
+                {lang === 'hi' ? 'बीटा टेस्टिंग फीडबैक और बग रिपोर्ट' : 'Beta Testing Feedback & Bug Reports'}
+              </h4>
+              <p className="text-xs text-slate/60 max-w-2xl leading-relaxed">
+                {lang === 'hi'
+                  ? 'घर की लिस्ट अभी पब्लिक बीटा टेस्टिंग के चरण में है। यदि आपको कोई समस्या आती है, क्रैश होता है, या आपके पास कोई नया फीचर सुझाव है, तो कृपया हमारे साथ साझा करें!'
+                  : 'Gharkilist is currently in public beta testing. If you experience any issues, crashes, or have feature ideas, we would love to hear from you!'}
+              </p>
+            </div>
+            <div className="flex gap-3 shrink-0 w-full md:w-auto justify-center">
+              <Button variant="outline" size="sm" asChild className="rounded-xl border-slate/20 hover:border-emerald/30 font-bold px-4 py-5 text-xs bg-white text-slate-800">
+                <a href="https://github.com" target="_blank" rel="noreferrer">
+                  {lang === 'hi' ? 'गिटहब पर रिपोर्ट करें' : 'Report on GitHub'}
+                </a>
+              </Button>
+              <Button variant="emerald" size="sm" asChild className="rounded-xl bg-[#03B459] hover:bg-[#03B459]/90 font-bold px-4 py-5 text-xs text-white shadow-md shadow-emerald/10">
+                <a href="https://wa.me/910000000000" target="_blank" rel="noreferrer">
+                  {lang === 'hi' ? 'व्हाट्सएप फीडबैक' : 'WhatsApp Feedback'}
+                </a>
+              </Button>
+            </div>
+          </div>
+
+          {/* Older Versions Section */}
+          {!loading && olderApks.length > 0 && (
+            <div className="mt-12 pt-8 border-t border-slate/10 text-center animate-fadeIn">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowOlder(!showOlder)}
+                className="gap-2 border-slate/15 text-slate/70 hover:text-emerald hover:border-emerald/40 hover:bg-emerald/5 rounded-2xl px-6 py-5 font-bold transition-all shadow-sm"
+              >
+                {showOlder ? (
+                  <>
+                    <ChevronUp className="w-4 h-4 text-emerald" />
+                    <span>{lang === 'hi' ? 'पुराने वर्शन छिपाएं' : 'Hide Older Versions'}</span>
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4 text-emerald" />
+                    <span>{lang === 'hi' ? 'पुराने वर्शन देखें' : 'View Older Versions'}</span>
+                  </>
+                )}
+              </Button>
+
+              {showOlder && (
+                <div className="mt-6 text-left max-w-3xl mx-auto bg-slate-50/60 border border-slate-100/70 rounded-3xl p-5 sm:p-6 animate-slide-up shadow-sm">
+                  <h4 className="text-sm font-extrabold text-slate-800 mb-4 flex items-center gap-2">
+                    <FileDown className="w-4 h-4 text-emerald" />
+                    <span>{lang === 'hi' ? 'उपलब्ध पिछले रिलीज़' : 'Available Previous Releases'}</span>
+                  </h4>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-xs sm:text-sm">
+                      <thead>
+                        <tr className="border-b border-slate-200 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                          <th className="pb-3 pl-2">Version</th>
+                          <th className="pb-3">Size</th>
+                          <th className="pb-3">Release Date</th>
+                          <th className="pb-3 pr-2 text-right">Download</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {olderApks.map((apk, index) => (
+                          <tr key={index} className="text-slate-650 hover:bg-white/40 group">
+                            <td className="py-3.5 pl-2 font-bold text-slate-800 flex flex-wrap items-center gap-1.5">
+                              <Badge variant="outline" className="px-2 py-0.5 border-slate-300 text-slate-700 bg-white">
+                                v{apk.version}
+                              </Badge>
+                              {apk.pathname.includes('64bit') && (
+                                <span className="text-[10px] text-slate-500 font-semibold">(64-bit ARM)</span>
+                              )}
+                              {apk.pathname.includes('32bit') && (
+                                <span className="text-[10px] text-slate-500 font-semibold">(32-bit ARM)</span>
+                              )}
+                              {apk.pathname.includes('x86_64') && (
+                                <span className="text-[10px] text-slate-500 font-semibold">(x86_64 Emulator)</span>
+                              )}
+                            </td>
+                            <td className="py-3.5 text-slate-500 font-medium">{formatSize(apk.size)}</td>
+                            <td className="py-3.5 text-slate-400 flex items-center gap-1.5 mt-0.5">
+                              <Calendar className="w-3.5 h-3.5 text-slate-300" />
+                              <span>{formatDate(apk.uploadedAt)}</span>
+                            </td>
+                            <td className="py-3.5 pr-2 text-right">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                asChild 
+                                className="h-8 w-8 rounded-xl p-0 hover:bg-emerald/5 hover:text-emerald text-slate-400"
+                                title="Download Version"
+                              >
+                                <a 
+                                  href={apk.url} 
+                                  target={apk.url.startsWith('http') ? '_blank' : undefined} 
+                                  rel={apk.url.startsWith('http') ? 'noreferrer' : undefined}
+                                  download={!apk.url.startsWith('http') ? '' : undefined}
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </a>
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* 3 Step Installation Walkthrough */}
           <div className="mt-16 pt-10 border-t border-slate/10">

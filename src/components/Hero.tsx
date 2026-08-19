@@ -58,8 +58,8 @@ export default function Hero() {
               <span className="w-2 h-2 rounded-full bg-[#03B459] animate-pulse" />
               <span className="text-[11px] font-bold text-[#03B459] tracking-wider uppercase font-sans">
                 {lang === 'hi'
-                  ? '✨ 100% ऑफ़लाइन • ज़ीरो ट्रैकिंग • भारतीय रसोई के लिए निर्मित'
-                  : '✨ 100% Offline • Zero Tracking • Built for Indian Kitchens'}
+                  ? '✨ पब्लिक बीटा टेस्टिंग • 100% ऑफ़लाइन • भारतीय रसोई के लिए'
+                  : '✨ Public Beta Testing • 100% Offline • Built for Indian Kitchens'}
               </span>
             </div>
 
@@ -96,7 +96,7 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.15s' }}>
               <Button size="lg" variant="emerald" asChild className="gap-2.5 bg-[#03B459] hover:bg-[#03B459]/90 shadow-lg shadow-emerald/20 text-base font-bold py-6 px-8 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-                <a href="/GharKiList-v1.0.1.apk" download>
+                <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
                   <Download className="w-5 h-5" />
                   <span>{lang === 'hi' ? 'ऐप डाउनलोड करें (मुफ्त)' : 'Download Free App'}</span>
                 </a>
