@@ -85,6 +85,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.lang-hi {
+  --font-sans: 'Noto Sans Devanagari', sans-serif;
+  --font-mono: 'Noto Sans Devanagari', monospace;
+}
+
+html.lang-hi body {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+}
+
 @keyframes slide-up {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }

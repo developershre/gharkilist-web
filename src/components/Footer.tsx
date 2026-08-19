@@ -1,12 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Heart, Code, Shield, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function Footer() {
   const { lang } = useLanguage();
+  const pathname = usePathname();
+  const isBlog = pathname === '/blog';
 
   return (
     <footer className="bg-slate-950 text-white pt-16 pb-12 border-t border-slate-800 relative overflow-hidden">
@@ -46,13 +49,16 @@ export default function Footer() {
 
           {/* Column 2: Quick Links */}
           <div className="md:col-span-3 space-y-3">
-            <h4 className="text-xs font-extrabold uppercase text-slate-300 tracking-wider">Quick Navigation</h4>
+            <h4 className="text-xs font-extrabold uppercase text-slate-300 tracking-wider">
+              {lang === 'hi' ? 'नेविगेशन' : 'Quick Navigation'}
+            </h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li><Link href="#features" className="hover:text-mint transition-colors">Features</Link></li>
-              <li><Link href="#why" className="hover:text-mint transition-colors">Why Gharkilist</Link></li>
-              <li><Link href="#demo" className="hover:text-mint transition-colors">Live Simulator</Link></li>
-              <li><Link href="#categories" className="hover:text-mint transition-colors">Pantry Catalog</Link></li>
-              <li><Link href="#download" className="hover:text-mint transition-colors">Download App</Link></li>
+              <li><Link href={isBlog ? '/#features' : '#features'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'विशेषताएं' : 'Features'}</Link></li>
+              <li><Link href={isBlog ? '/#why' : '#why'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist'}</Link></li>
+              <li><Link href={isBlog ? '/#demo' : '#demo'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'लाइव डेमो' : 'Live Simulator'}</Link></li>
+              <li><Link href={isBlog ? '/#categories' : '#categories'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'श्रेणियां' : 'Pantry Catalog'}</Link></li>
+              <li><Link href={isBlog ? '/#download' : '#download'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'डाउनलोड' : 'Download App'}</Link></li>
+              <li><Link href="/blog" className="hover:text-mint transition-colors font-semibold text-mint">{lang === 'hi' ? 'अपडेट्स और बदलाव' : 'Updates & Changelog'}</Link></li>
             </ul>
           </div>
 

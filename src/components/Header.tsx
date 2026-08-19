@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Download, Menu, X, Globe, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,8 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { lang, toggleLang } = useLanguage();
+  const pathname = usePathname();
+  const isBlog = pathname === '/blog';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -19,11 +22,12 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { href: '#features', label: lang === 'hi' ? 'विशेषताएं' : 'Features' },
-    { href: '#why', label: lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist' },
-    { href: '#demo', label: lang === 'hi' ? 'लाइव डेमो' : 'Live Demo' },
-    { href: '#categories', label: lang === 'hi' ? 'श्रेणियां' : 'Categories' },
-    { href: '#download', label: lang === 'hi' ? 'डाउनलोड' : 'Download App' },
+    { href: isBlog ? '/#features' : '#features', label: lang === 'hi' ? 'विशेषताएं' : 'Features' },
+    { href: isBlog ? '/#why' : '#why', label: lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist' },
+    { href: isBlog ? '/#demo' : '#demo', label: lang === 'hi' ? 'लाइव डेमो' : 'Live Demo' },
+    { href: isBlog ? '/#categories' : '#categories', label: lang === 'hi' ? 'श्रेणियां' : 'Categories' },
+    { href: isBlog ? '/#download' : '#download', label: lang === 'hi' ? 'डाउनलोड' : 'Download App' },
+    { href: '/blog', label: lang === 'hi' ? 'अपडेट्स' : 'Updates' },
   ];
 
   return (
@@ -45,7 +49,7 @@ export default function Header() {
               </span>
             </div>
             <span
-              className="text-[10px] font-semibold text-emerald tracking-wide mt-0.5"
+              className="text-[10px] font-semibold text-emerald tracking-wide mt-0.5 leading-normal"
               style={{ fontFamily: 'var(--font-hindi)' }}
             >
               घर की लिस्ट
