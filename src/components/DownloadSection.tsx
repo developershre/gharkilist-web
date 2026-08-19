@@ -61,7 +61,7 @@ export default function DownloadSection() {
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-white border border-slate-700/30 flex items-center justify-center p-1.5 shadow-lg">
-                      <img src="/logo.svg" alt="Gharkilist Logo" className="w-full h-full object-contain" />
+                      <img src="/logo.png" alt="Gharkilist Logo" className="w-full h-full object-contain" />
                     </div>
                     <div>
                       <h3 className="text-xl font-extrabold tracking-tight">Gharkilist (घर की लिस्ट)</h3>

@@ -218,7 +218,7 @@ export default function PhoneSimulator() {
           {/* Header */}
           <div className="flex items-center justify-between mb-2.5 pb-1">
             <div className="flex items-center gap-2">
-              <img src="/logo.svg" alt="Gharkilist Logo" className="w-6.5 h-6.5 object-contain" />
+              <img src="/logo.png" alt="Gharkilist Logo" className="w-6.5 h-6.5 object-contain" />
               <span className="text-[14px] font-bold text-slate-800 tracking-tight font-sans">
                 gharki<span className="text-[#03B459]">list</span>
               </span>
@@ -350,7 +350,7 @@ export default function PhoneSimulator() {
               >
                 <ArrowLeft className="w-4.5 h-4.5 text-slate-800" />
               </button>
-              <img src="/logo.svg" alt="Gharkilist Logo" className="w-6 h-6 object-contain" />
+              <img src="/logo.png" alt="Gharkilist Logo" className="w-6 h-6 object-contain" />
               <span className="text-[13.5px] font-bold text-slate-800 tracking-tight font-sans">
                 gharki<span className="text-[#03B459]">list</span>
               </span>

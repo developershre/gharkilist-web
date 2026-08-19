@@ -103,7 +103,16 @@ export default function Hero() {
               </Button>
 
               <Button size="lg" variant="outline" asChild className="gap-2.5 border-slate/20 hover:border-emerald/30 text-base font-semibold py-6 px-8 bg-white/70 backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-                <Link href="#demo">
+                <Link 
+                  href="/?scroll=demo"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const element = document.getElementById('demo');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
                   <Play className="w-4 h-4 text-[#03B459] fill-[#03B459]" />
                   <span>{lang === 'hi' ? 'लाइव डेमो चलाएं' : 'Try Interactive Demo'}</span>
                 </Link>
@@ -154,7 +163,7 @@ export default function Hero() {
                     {/* Phone Header - Identical to Screenshot */}
                     <div className="flex items-center justify-between mb-2.5 pb-1">
                       <div className="flex items-center gap-2">
-                        <img src="/logo.svg" alt="Gharkilist Logo" className="w-6.5 h-6.5 object-contain" />
+                        <img src="/logo.png" alt="Gharkilist Logo" className="w-6.5 h-6.5 object-contain" />
                         <span className="text-[14px] font-bold text-slate-800 tracking-tight font-sans">
                           gharki<span className="text-[#03B459]">list</span>
                         </span>

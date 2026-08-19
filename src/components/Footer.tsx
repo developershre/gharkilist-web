@@ -11,6 +11,19 @@ export default function Footer() {
   const pathname = usePathname();
   const isBlog = pathname === '/blog';
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/?scroll=')) {
+      const targetId = href.split('=')[1];
+      if (!isBlog) {
+        e.preventDefault();
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  };
+
   return (
     <footer className="bg-slate-950 text-white pt-16 pb-12 border-t border-slate-800 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -19,7 +32,7 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center p-1 shadow-md">
-                <img src="/logo.svg" alt="Gharkilist Logo" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="Gharkilist Logo" className="w-full h-full object-contain" />
               </div>
               <div className="flex flex-col leading-none">
                 <span className="text-lg font-extrabold text-white tracking-tight">
@@ -53,11 +66,11 @@ export default function Footer() {
               {lang === 'hi' ? 'नेविगेशन' : 'Quick Navigation'}
             </h4>
             <ul className="space-y-2 text-sm text-slate-400">
-              <li><Link href={isBlog ? '/#features' : '#features'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'विशेषताएं' : 'Features'}</Link></li>
-              <li><Link href={isBlog ? '/#why' : '#why'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist'}</Link></li>
-              <li><Link href={isBlog ? '/#demo' : '#demo'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'लाइव डेमो' : 'Live Simulator'}</Link></li>
-              <li><Link href={isBlog ? '/#categories' : '#categories'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'श्रेणियां' : 'Pantry Catalog'}</Link></li>
-              <li><Link href={isBlog ? '/#download' : '#download'} className="hover:text-mint transition-colors">{lang === 'hi' ? 'डाउनलोड' : 'Download App'}</Link></li>
+              <li><Link href="/?scroll=features" onClick={(e) => handleNavClick(e, '/?scroll=features')} className="hover:text-mint transition-colors">{lang === 'hi' ? 'विशेषताएं' : 'Features'}</Link></li>
+              <li><Link href="/?scroll=why" onClick={(e) => handleNavClick(e, '/?scroll=why')} className="hover:text-mint transition-colors">{lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist'}</Link></li>
+              <li><Link href="/?scroll=demo" onClick={(e) => handleNavClick(e, '/?scroll=demo')} className="hover:text-mint transition-colors">{lang === 'hi' ? 'लाइव डेमो' : 'Live Simulator'}</Link></li>
+              <li><Link href="/?scroll=categories" onClick={(e) => handleNavClick(e, '/?scroll=categories')} className="hover:text-mint transition-colors">{lang === 'hi' ? 'श्रेणियां' : 'Pantry Catalog'}</Link></li>
+              <li><Link href="/?scroll=download" onClick={(e) => handleNavClick(e, '/?scroll=download')} className="hover:text-mint transition-colors">{lang === 'hi' ? 'डाउनलोड' : 'Download App'}</Link></li>
               <li><Link href="/blog" className="hover:text-mint transition-colors font-semibold text-mint">{lang === 'hi' ? 'अपडेट्स और बदलाव' : 'Updates & Changelog'}</Link></li>
             </ul>
           </div>

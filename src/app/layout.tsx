@@ -11,9 +11,6 @@ export const metadata: Metadata = {
     description: "Say goodbye to paper lists and barcode apps. Track pantry stock, compute budget in ₹, and order via WhatsApp in one tap.",
     type: "website",
   },
-  icons: {
-    icon: "/logo.svg"
-  }
 };
 
 export default function RootLayout({

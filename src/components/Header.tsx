@@ -21,26 +21,48 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('/?scroll=')) {
+      const targetId = href.split('=')[1];
+      if (!isBlog) {
+        e.preventDefault();
+        const element = document.getElementById(targetId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  };
+
   const navLinks = [
-    { href: isBlog ? '/#features' : '#features', label: lang === 'hi' ? 'विशेषताएं' : 'Features' },
-    { href: isBlog ? '/#why' : '#why', label: lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist' },
-    { href: isBlog ? '/#demo' : '#demo', label: lang === 'hi' ? 'लाइव डेमो' : 'Live Demo' },
-    { href: isBlog ? '/#categories' : '#categories', label: lang === 'hi' ? 'श्रेणियां' : 'Categories' },
-    { href: isBlog ? '/#download' : '#download', label: lang === 'hi' ? 'डाउनलोड' : 'Download App' },
+    { href: '/?scroll=features', label: lang === 'hi' ? 'विशेषताएं' : 'Features' },
+    { href: '/?scroll=why', label: lang === 'hi' ? 'क्यों चुनें' : 'Why Gharkilist' },
+    { href: '/?scroll=demo', label: lang === 'hi' ? 'लाइव डेमो' : 'Live Demo' },
+    { href: '/?scroll=categories', label: lang === 'hi' ? 'श्रेणियां' : 'Categories' },
+    { href: '/?scroll=download', label: lang === 'hi' ? 'डाउनलोड' : 'Download App' },
     { href: '/blog', label: lang === 'hi' ? 'अपडेट्स' : 'Updates' },
   ];
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? 'bg-white/85 backdrop-blur-md border-b border-slate/10 shadow-xs py-3'
-          : 'bg-transparent py-5'
+        ? 'bg-white/85 backdrop-blur-md border-b border-slate/10 shadow-xs py-3'
+        : 'bg-transparent py-5'
         }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-xs group-hover:scale-105 transition-all p-1">
-            <img src="/logo.svg" alt="Gharkilist Logo" className="w-full h-full object-contain" />
+        <Link
+          href="/"
+          onClick={(e) => {
+            if (!isBlog) {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
+          className="flex items-center gap-2.5 group"
+        >
+          <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shadow-xs group-hover:scale-105 transition-all p-1">
+            <img src="/logo.png" alt="Gharkilist Logo" className="w-full h-full object-contain" />
           </div>
           <div className="flex flex-col leading-none">
             <div className="flex items-center gap-1.5">
@@ -55,13 +77,14 @@ export default function Header() {
               घर की लिस्ट
             </span>
           </div>
-        </a>
+        </Link>
 
         <nav className="hidden md:flex items-center gap-1 bg-white/70 backdrop-blur-md border border-slate/10 p-1.5 rounded-full shadow-xs">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="text-[13px] font-medium text-slate/70 hover:text-emerald px-4 py-1.5 rounded-full hover:bg-slate/5 transition-all"
             >
               {link.label}
@@ -116,7 +139,10 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => {
+                setMobileOpen(false);
+                handleNavClick(e, link.href);
+              }}
               className="block py-2.5 px-4 text-[14px] font-semibold text-slate/70 hover:text-emerald hover:bg-emerald/5 rounded-xl transition-all"
             >
               {link.label}

@@ -7,10 +7,12 @@ import CategoryExplorer from '@/components/CategoryExplorer';
 import DownloadSection from '@/components/DownloadSection';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
+import ScrollHandler from '@/components/ScrollHandler';
 
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <ScrollHandler />
       <Header />
       <Hero />
       <FeaturesGrid />
