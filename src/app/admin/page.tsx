@@ -1,27 +1,29 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Download, 
   Trash2, 
   Lock, 
   RefreshCw, 
-  FileSpreadsheet, 
   Calendar, 
   Loader2, 
   LogOut, 
-  ExternalLink, 
   ShieldAlert, 
   CheckCircle2, 
   AlertTriangle,
-  UploadCloud
+  Plus,
+  Edit,
+  FileText,
+  Package,
+  Save,
+  X
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ApkRelease {
   url: string;
@@ -32,31 +34,62 @@ interface ApkRelease {
   isFallback: boolean;
 }
 
+interface BlogUpdate {
+  id: string;
+  version?: string;
+  date_en: string;
+  date_hi: string;
+  title_en: string;
+  title_hi: string;
+  category: 'release' | 'feature' | 'improvement';
+  excerpt_en: string;
+  excerpt_hi: string;
+  bullets_en: string[];
+  bullets_hi: string[];
+  apkLink?: string;
+  apkSize?: string;
+}
+
+type ActiveTab = 'apk' | 'blog';
+
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [authError, setAuthError] = useState('');
   const [verifying, setVerifying] = useState(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('apk');
 
-  // APK list state
+  // APK state
   const [apks, setApks] = useState<ApkRelease[]>([]);
-  const [loadingList, setLoadingList] = useState(false);
-  const [listError, setListError] = useState('');
+  const [loadingApks, setLoadingApks] = useState(false);
+  const [apkForm, setApkForm] = useState({
+    url: '',
+    pathname: '',
+    size: '',
+    version: '',
+  });
+  const [apkError, setApkError] = useState('');
+  const [apkSuccess, setApkSuccess] = useState('');
 
-  // Upload state
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [proposedVersion, setProposedVersion] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadError, setUploadError] = useState('');
-  const [uploadSuccess, setUploadSuccess] = useState('');
+  // Blog state
+  const [blogs, setBlogs] = useState<BlogUpdate[]>([]);
+  const [loadingBlogs, setLoadingBlogs] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<BlogUpdate | null>(null);
+  const [blogForm, setBlogForm] = useState({
+    title_en: '',
+    title_hi: '',
+    version: '',
+    category: 'release' as 'release' | 'feature' | 'improvement',
+    excerpt_en: '',
+    excerpt_hi: '',
+    bullets_en: '',
+    bullets_hi: '',
+    apkLink: '',
+    apkSize: '',
+  });
+  const [blogError, setBlogError] = useState('');
+  const [blogSuccess, setBlogSuccess] = useState('');
 
-  // Delete state
-  const [apkToDelete, setApkToDelete] = useState<ApkRelease | null>(null);
-  const [deleting, setDeleting] = useState(false);
-
-  // Check localStorage for saved password on mount
   useEffect(() => {
     const savedPassword = localStorage.getItem('gharkilist_admin_password');
     if (savedPassword) {
@@ -76,11 +109,12 @@ export default function AdminPage() {
       if (res.ok) {
         setIsAuthorized(true);
         fetchApks();
+        fetchBlogs();
       } else {
         localStorage.removeItem('gharkilist_admin_password');
         setAuthError('Session expired. Please enter the password again.');
       }
-    } catch (e) {
+    } catch {
       setAuthError('Connection error. Failed to verify password.');
     } finally {
       setVerifying(false);
@@ -101,11 +135,12 @@ export default function AdminPage() {
         localStorage.setItem('gharkilist_admin_password', password);
         setIsAuthorized(true);
         fetchApks();
+        fetchBlogs();
       } else {
         const data = await res.json();
         setAuthError(data.error || 'Invalid admin password.');
       }
-    } catch (e) {
+    } catch {
       setAuthError('Network error. Failed to verify password.');
     } finally {
       setVerifying(false);
@@ -117,87 +152,211 @@ export default function AdminPage() {
     setPassword('');
     setIsAuthorized(false);
     setApks([]);
+    setBlogs([]);
   };
 
+  // APK Functions
   const fetchApks = async () => {
-    setLoadingList(true);
-    setListError('');
+    setLoadingApks(true);
     try {
       const res = await fetch('/api/apks');
       if (res.ok) {
         const data = await res.json();
         setApks(data);
-      } else {
-        setListError('Failed to fetch APK list.');
       }
-    } catch (e) {
-      setListError('Error fetching APK list.');
+    } catch {
+      console.error('Failed to fetch APKs');
     } finally {
-      setLoadingList(false);
+      setLoadingApks(false);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (!file.name.endsWith('.apk')) {
-        setUploadError('Only .apk files are allowed.');
-        setSelectedFile(null);
-        setProposedVersion('');
-        return;
-      }
-      setSelectedFile(file);
-      setUploadError('');
-      setUploadSuccess('');
+  const handleAddApk = async () => {
+    if (!apkForm.url || !apkForm.version) {
+      setApkError('URL and version are required.');
+      return;
+    }
+    setApkError('');
+    try {
+      const filename = apkForm.url.split('/').pop() || `GharKiList-v${apkForm.version}.apk`;
+      const newApk: ApkRelease = {
+        url: apkForm.url,
+        pathname: apkForm.pathname || filename,
+        size: parseInt(apkForm.size) || 0,
+        uploadedAt: new Date().toISOString(),
+        version: apkForm.version,
+        isFallback: false,
+      };
+      // Update the apks state
+      setApks(prev => [newApk, ...prev]);
+      setApkSuccess('APK added successfully!');
+      setApkForm({ url: '', pathname: '', size: '', version: '' });
+      setTimeout(() => setApkSuccess(''), 3000);
+    } catch {
+      setApkError('Failed to add APK.');
+    }
+  };
 
-      // Auto-extract version from filename, e.g. GharKiList-v1.0.2.apk
-      const match = file.name.match(/v?(\d+\.\d+(?:\.\d+)?(?:-[a-zA-Z0-9.]+)?)/i);
-      if (match) {
-        setProposedVersion(match[1]);
+  const handleDeleteApk = (index: number) => {
+    setApks(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleExtractFromUrl = () => {
+    if (!apkForm.url) return;
+    try {
+      const url = new URL(apkForm.url);
+      const pathParts = url.pathname.split('/');
+      const filename = pathParts[pathParts.length - 1];
+      if (filename) {
+        setApkForm(prev => ({ ...prev, pathname: filename }));
+        // Try to extract version
+        const versionMatch = filename.match(/v?(\d+\.\d+(?:\.\d+)?(?:\+\d+)?)/i);
+        if (versionMatch) {
+          setApkForm(prev => ({ ...prev, version: versionMatch[1] }));
+        }
+      }
+    } catch {
+      // Invalid URL, ignore
+    }
+  };
+
+  // Blog Functions
+  const fetchBlogs = async () => {
+    setLoadingBlogs(true);
+    try {
+      const res = await fetch('/api/blog');
+      if (res.ok) {
+        const data = await res.json();
+        setBlogs(data);
+      }
+    } catch {
+      console.error('Failed to fetch blogs');
+    } finally {
+      setLoadingBlogs(false);
+    }
+  };
+
+  const resetBlogForm = () => {
+    setBlogForm({
+      title_en: '',
+      title_hi: '',
+      version: '',
+      category: 'release',
+      excerpt_en: '',
+      excerpt_hi: '',
+      bullets_en: '',
+      bullets_hi: '',
+      apkLink: '',
+      apkSize: '',
+    });
+    setEditingBlog(null);
+  };
+
+  const handleEditBlog = (blog: BlogUpdate) => {
+    setEditingBlog(blog);
+    setBlogForm({
+      title_en: blog.title_en,
+      title_hi: blog.title_hi,
+      version: blog.version || '',
+      category: blog.category,
+      excerpt_en: blog.excerpt_en,
+      excerpt_hi: blog.excerpt_hi,
+      bullets_en: blog.bullets_en.join('\n'),
+      bullets_hi: blog.bullets_hi.join('\n'),
+      apkLink: blog.apkLink || '',
+      apkSize: blog.apkSize || '',
+    });
+  };
+
+  const handleSaveBlog = async () => {
+    if (!blogForm.title_en || !blogForm.excerpt_en) {
+      setBlogError('Title and excerpt (English) are required.');
+      return;
+    }
+    setBlogError('');
+
+    const now = new Date();
+    const dateEn = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const dateHi = now.toLocaleDateString('hi-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    const blogData: Partial<BlogUpdate> = {
+      title_en: blogForm.title_en,
+      title_hi: blogForm.title_hi || blogForm.title_en,
+      version: blogForm.version || undefined,
+      category: blogForm.category,
+      excerpt_en: blogForm.excerpt_en,
+      excerpt_hi: blogForm.excerpt_hi || blogForm.excerpt_en,
+      bullets_en: blogForm.bullets_en.split('\n').filter(b => b.trim()),
+      bullets_hi: blogForm.bullets_hi.split('\n').filter(b => b.trim()),
+      apkLink: blogForm.apkLink || undefined,
+      apkSize: blogForm.apkSize || undefined,
+    };
+
+    try {
+      if (editingBlog) {
+        // Update existing
+        const res = await fetch('/api/blog', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: editingBlog.id, ...blogData, date_en: editingBlog.date_en, date_hi: editingBlog.date_hi }),
+        });
+        if (res.ok) {
+          setBlogSuccess('Blog post updated!');
+          fetchBlogs();
+        }
       } else {
-        setProposedVersion('1.0.0');
+        // Create new
+        const res = await fetch('/api/blog', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...blogData,
+            date_en: dateEn,
+            date_hi: dateHi,
+          }),
+        });
+        if (res.ok) {
+          setBlogSuccess('Blog post created!');
+          fetchBlogs();
+        }
       }
+      resetBlogForm();
+      setTimeout(() => setBlogSuccess(''), 3000);
+    } catch {
+      setBlogError('Failed to save blog post.');
     }
   };
 
-  const handleUploadApk = async () => {
-    if (!selectedFile) return;
-    setUploading(true);
-    setUploadProgress(0);
-    setUploadError('Upload feature is currently disabled (Vercel Blob removed).');
-    setUploading(false);
-  };
-
-  const handleDeleteApk = async () => {
-    if (!apkToDelete) return;
-    setDeleting(true);
-    alert('Delete feature is currently disabled (Vercel Blob removed).');
-    setDeleting(false);
-    setApkToDelete(null);
+  const handleDeleteBlog = async (id: string) => {
+    try {
+      await fetch('/api/blog', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      fetchBlogs();
+    } catch {
+      console.error('Failed to delete blog');
+    }
   };
 
   const formatSize = (bytes: number) => {
+    if (!bytes) return 'Unknown';
     const mb = bytes / (1024 * 1024);
     return `${mb.toFixed(1)} MB`;
   };
 
   const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-IN', {
+    return new Date(dateStr).toLocaleDateString('en-IN', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
     });
   };
-
-  const isFallbackMode = apks.some(apk => apk.isFallback);
 
   if (!isAuthorized) {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center px-4 py-12 relative overflow-hidden">
-        {/* Decorative background shapes */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-saffron/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -206,9 +365,9 @@ export default function AdminPage() {
             <div className="w-14 h-14 rounded-2xl bg-emerald/10 border border-emerald/20 flex items-center justify-center mx-auto mb-4 text-emerald">
               <ShieldAlert className="w-7 h-7" />
             </div>
-            <CardTitle className="text-2xl font-extrabold tracking-tight">Gharkilist Admin Portal</CardTitle>
+            <CardTitle className="text-2xl font-extrabold tracking-tight">Gharkilist Admin</CardTitle>
             <CardDescription className="text-slate-400">
-              Access the secure dashboard to publish and manage APK files.
+              Manage APK releases and blog posts.
             </CardDescription>
           </CardHeader>
           
@@ -225,7 +384,7 @@ export default function AdminPage() {
                 <div className="relative">
                   <Input 
                     type="password"
-                    placeholder="Enter system password"
+                    placeholder="Enter password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -240,17 +399,11 @@ export default function AdminPage() {
               <Button 
                 type="submit" 
                 variant="emerald" 
-                className="w-full font-bold py-5 rounded-xl shadow-lg shadow-emerald/10 flex items-center justify-center gap-2"
+                className="w-full font-bold py-5 rounded-xl shadow-lg shadow-emerald/10"
                 disabled={verifying}
               >
-                {verifying ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Verifying...</span>
-                  </>
-                ) : (
-                  <span>Access Dashboard</span>
-                )}
+                {verifying ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                {verifying ? 'Verifying...' : 'Access Dashboard'}
               </Button>
             </CardFooter>
           </form>
@@ -261,37 +414,35 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
-      {/* Decorative background shapes */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-saffron/5 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Navigation Header */}
+      {/* Header */}
       <header className="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center p-1 border border-slate-800">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src="/logo.svg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
-              <span className="font-extrabold text-base tracking-tight block">Gharkilist (घर की लिस्ट)</span>
-              <span className="text-[10px] text-emerald font-bold uppercase tracking-wider block">Admin Release Portal</span>
+              <span className="font-extrabold text-base tracking-tight block">Gharkilist Admin</span>
+              <span className="text-[10px] text-emerald font-bold uppercase tracking-wider block">Dashboard</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={fetchApks} 
-              disabled={loadingList}
+              onClick={() => { fetchApks(); fetchBlogs(); }}
               className="text-slate-400 hover:text-white border border-slate-800 rounded-xl px-3 hover:bg-slate-900"
             >
-              <RefreshCw className={`w-4 h-4 ${loadingList ? 'animate-spin' : ''}`} />
+              <RefreshCw className="w-4 h-4" />
             </Button>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={handleLogout}
-              className="text-red-400 hover:text-red-300 border-red-500/20 hover:bg-red-500/10 rounded-xl gap-2 font-bold px-3.5"
+              className="text-red-400 hover:text-red-300 border-red-500/20 hover:bg-red-500/10 rounded-xl gap-2 font-bold"
             >
               <LogOut className="w-4 h-4" />
               <span>Logout</span>
@@ -300,296 +451,422 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
+      {/* Tab Navigation */}
+      <div className="border-b border-slate-900 bg-slate-950/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-1">
+            <button
+              onClick={() => setActiveTab('apk')}
+              className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+                activeTab === 'apk'
+                  ? 'border-emerald text-emerald'
+                  : 'border-transparent text-slate-400 hover:text-white'
+              }`}
+            >
+              <Package className="w-4 h-4" />
+              APK Management
+            </button>
+            <button
+              onClick={() => setActiveTab('blog')}
+              className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+                activeTab === 'blog'
+                  ? 'border-emerald text-emerald'
+                  : 'border-transparent text-slate-400 hover:text-white'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              Blog Posts
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         
-        {/* Warn if running in fallback mode */}
-        {isFallbackMode && (
-          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-2xl p-4 mb-8 flex items-start gap-3 shadow-lg max-w-4xl">
-            <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
-            <div>
-              <h4 className="font-extrabold text-sm mb-0.5">Vercel Blob Storage - Disabled</h4>
-              <p className="text-xs text-amber-400/80 leading-relaxed">
-                Vercel Blob storage logic has been removed. The application is running in static fallback mode, serving the pre-packaged APK file. Uploading or deleting APKs is currently disabled.
-              </p>
+        {/* APK Management Tab */}
+        {activeTab === 'apk' && (
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Add APK Form */}
+            <div className="lg:col-span-5">
+              <Card className="bg-slate-900/60 border-slate-800 text-white rounded-3xl shadow-xl">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold tracking-tight flex items-center gap-2">
+                    <Plus className="w-5 h-5 text-emerald" />
+                    Add New APK Release
+                  </CardTitle>
+                  <CardDescription className="text-slate-400 text-xs">
+                    Add a GitHub release URL or direct APK download link.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {apkError && (
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl p-3 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                      <span>{apkError}</span>
+                    </div>
+                  )}
+                  {apkSuccess && (
+                    <div className="bg-emerald/10 border border-emerald/20 text-emerald text-xs rounded-xl p-3 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>{apkSuccess}</span>
+                    </div>
+                  )}
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">APK Download URL *</label>
+                    <Input
+                      placeholder="https://github.com/.../releases/download/.../app.apk"
+                      value={apkForm.url}
+                      onChange={(e) => setApkForm(prev => ({ ...prev, url: e.target.value }))}
+                      onBlur={handleExtractFromUrl}
+                      className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                    />
+                    <span className="text-[10px] text-slate-500">Paste URL and click outside to auto-fill fields</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Version *</label>
+                      <Input
+                        placeholder="e.g. 1.0.0"
+                        value={apkForm.version}
+                        onChange={(e) => setApkForm(prev => ({ ...prev, version: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Size (bytes)</label>
+                      <Input
+                        placeholder="e.g. 28323994"
+                        value={apkForm.size}
+                        onChange={(e) => setApkForm(prev => ({ ...prev, size: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Filename</label>
+                    <Input
+                      placeholder="Auto-extracted from URL"
+                      value={apkForm.pathname}
+                      onChange={(e) => setApkForm(prev => ({ ...prev, pathname: e.target.value }))}
+                      className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                    />
+                  </div>
+                </CardContent>
+                <CardFooter className="px-5 pb-5">
+                  <Button
+                    onClick={handleAddApk}
+                    disabled={!apkForm.url || !apkForm.version}
+                    variant="emerald"
+                    className="w-full font-bold py-5 rounded-xl"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add APK Release
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+
+            {/* APK List */}
+            <div className="lg:col-span-7">
+              <Card className="bg-slate-900/60 border-slate-800 text-white rounded-3xl shadow-xl">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl font-bold tracking-tight">Releases</CardTitle>
+                    <CardDescription className="text-slate-400 text-xs">
+                      {apks.length} APK releases configured
+                    </CardDescription>
+                  </div>
+                  <Badge variant="mint" className="px-2.5 py-1 text-[10px] font-bold">
+                    {apks.length} Active
+                  </Badge>
+                </CardHeader>
+                <CardContent>
+                  {loadingApks ? (
+                    <div className="py-16 flex justify-center">
+                      <Loader2 className="w-6 h-6 animate-spin text-emerald" />
+                    </div>
+                  ) : apks.length === 0 ? (
+                    <div className="py-16 text-center border border-dashed border-slate-800 rounded-2xl">
+                      <Package className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                      <p className="text-sm text-slate-400">No APK releases yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {apks.map((apk, index) => (
+                        <div key={index} className="bg-slate-950/50 border border-slate-800 rounded-2xl p-4 flex items-center gap-4 hover:border-slate-700 transition-colors">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant={index === 0 ? "mint" : "outline"} className="px-2 py-0.5 text-[10px]">
+                                v{apk.version}
+                              </Badge>
+                              {index === 0 && (
+                                <Badge variant="saffron" className="px-1.5 py-0 text-[8px] font-bold uppercase">Latest</Badge>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-400 font-mono truncate">{apk.pathname}</p>
+                            <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-500">
+                              <span>{formatSize(apk.size)}</span>
+                              <span>{formatDate(apk.uploadedAt)}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <a href={apk.url} target="_blank" rel="noreferrer" className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors">
+                              <Download className="w-4 h-4" />
+                            </a>
+                            {!apk.isFallback && (
+                              <button onClick={() => handleDeleteApk(index)} className="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           </div>
         )}
 
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          
-          {/* UPLOAD PANEL */}
-          <div className="lg:col-span-4">
-            <Card className="bg-slate-900/60 border-slate-800 text-white rounded-3xl shadow-xl p-2 backdrop-blur-md">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold tracking-tight">Upload New APK</CardTitle>
-                <CardDescription className="text-slate-400 text-xs">
-                  Upload an optimized APK build to Vercel Blob. Ensure the file name ends with `.apk`.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4 px-5">
-                {uploadError && (
-                  <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl p-3 flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{uploadError}</span>
-                  </div>
-                )}
-                
-                {uploadSuccess && (
-                  <div className="bg-emerald/10 border border-emerald/20 text-emerald text-xs rounded-xl p-3 flex items-start gap-2">
-                    <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{uploadSuccess}</span>
-                  </div>
-                )}
-
-                {/* Drag and Drop File Input Area */}
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition duration-200 flex flex-col items-center justify-center ${
-                    selectedFile 
-                      ? 'border-emerald/40 bg-emerald/5 hover:bg-emerald/10' 
-                      : 'border-slate-800 hover:border-slate-700 hover:bg-slate-900/30'
-                  }`}
-                >
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleFileChange} 
-                    accept=".apk"
-                    className="hidden"
-                    disabled={uploading}
-                  />
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${
-                    selectedFile ? 'bg-emerald/10 text-emerald' : 'bg-slate-800 text-slate-400'
-                  }`}>
-                    <UploadCloud className="w-6 h-6" />
-                  </div>
-                  {selectedFile ? (
-                    <div className="space-y-1">
-                      <span className="text-sm font-bold text-white block max-w-[200px] truncate mx-auto">{selectedFile.name}</span>
-                      <span className="text-[10px] text-slate-400 block">{formatSize(selectedFile.size)}</span>
-                    </div>
-                  ) : (
-                    <div>
-                      <span className="text-sm font-bold text-white block">Choose APK file</span>
-                      <span className="text-xs text-slate-500 block mt-1">or drag & drop here</span>
-                    </div>
-                  )}
-                </div>
-
-                {selectedFile && (
-                  <div className="space-y-2 pt-2 animate-fadeIn">
-                    <label className="text-xs font-semibold text-slate-300">Semantic Version</label>
-                    <div className="flex items-center gap-2">
-                      <Input 
-                        type="text" 
-                        placeholder="e.g. 1.0.2"
-                        value={proposedVersion}
-                        onChange={(e) => setProposedVersion(e.target.value)}
-                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
-                        disabled={uploading}
-                      />
-                      <Badge variant="outline" className="text-[10px] text-emerald bg-emerald/5 border-emerald/20 px-2.5 py-1 whitespace-nowrap">
-                        v{proposedVersion}
-                      </Badge>
-                    </div>
-                    <span className="text-[10px] text-slate-500 block leading-tight">
-                      The file will be uploaded and stored as `GharKiList-v{proposedVersion || '1.0.0'}.apk`
-                    </span>
-                  </div>
-                )}
-
-                {/* Uploading progress bar */}
-                {uploading && (
-                  <div className="space-y-2 pt-2">
-                    <div className="flex items-center justify-between text-xs font-bold text-slate-300">
-                      <span className="flex items-center gap-1.5">
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald" />
-                        Uploading to Blob Store
-                      </span>
-                      <span>{Math.round(uploadProgress)}%</span>
-                    </div>
-                    <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-900">
-                      <div 
-                        className="bg-emerald h-full rounded-full transition-all duration-100 ease-out"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-
-              <CardFooter className="px-5 pb-6">
-                <Button 
-                  onClick={handleUploadApk}
-                  disabled={!selectedFile || uploading}
-                  variant="emerald"
-                  className="w-full font-bold py-5 rounded-xl shadow-lg shadow-emerald/10 flex items-center justify-center gap-2"
-                >
-                  {uploading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Uploading ({Math.round(uploadProgress)}%)...</span>
-                    </>
-                  ) : (
-                    <>
-                      <UploadCloud className="w-4 h-4" />
-                      <span>Upload & Publish Release</span>
-                    </>
-                  )}
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-
-          {/* LIST / MANAGER PANEL */}
-          <div className="lg:col-span-8">
-            <Card className="bg-slate-900/60 border-slate-800 text-white rounded-3xl shadow-xl p-2 backdrop-blur-md">
-              <CardHeader className="flex flex-row items-center justify-between gap-4">
-                <div>
-                  <CardTitle className="text-xl font-bold tracking-tight">Active Releases</CardTitle>
+        {/* Blog Management Tab */}
+        {activeTab === 'blog' && (
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Blog Form */}
+            <div className="lg:col-span-5">
+              <Card className="bg-slate-900/60 border-slate-800 text-white rounded-3xl shadow-xl">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold tracking-tight flex items-center gap-2">
+                    {editingBlog ? <Edit className="w-5 h-5 text-emerald" /> : <Plus className="w-5 h-5 text-emerald" />}
+                    {editingBlog ? 'Edit Blog Post' : 'New Blog Post'}
+                  </CardTitle>
                   <CardDescription className="text-slate-400 text-xs">
-                    List of all APK binaries hosted on Vercel Blob. Sorted from newest to oldest.
+                    {editingBlog ? 'Update the blog post details.' : 'Create a new update or changelog entry.'}
                   </CardDescription>
-                </div>
-                <Badge variant="mint" className="px-2.5 py-1 text-[10px] font-bold">
-                  {apks.length} {apks.length === 1 ? 'Release' : 'Releases'}
-                </Badge>
-              </CardHeader>
-              <CardContent className="px-5 pb-6">
-                {loadingList ? (
-                  <div className="py-20 flex flex-col justify-center items-center gap-3">
-                    <Loader2 className="w-8 h-8 animate-spin text-emerald" />
-                    <span className="text-xs text-slate-400 font-medium">Fetching Vercel Blob records...</span>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {blogError && (
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl p-3 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0" />
+                      <span>{blogError}</span>
+                    </div>
+                  )}
+                  {blogSuccess && (
+                    <div className="bg-emerald/10 border border-emerald/20 text-emerald text-xs rounded-xl p-3 flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>{blogSuccess}</span>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Title (English) *</label>
+                      <Input
+                        placeholder="v1.0 — New Feature"
+                        value={blogForm.title_en}
+                        onChange={(e) => setBlogForm(prev => ({ ...prev, title_en: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Title (Hindi)</label>
+                      <Input
+                        placeholder="v1.0 — नया फीचर"
+                        value={blogForm.title_hi}
+                        onChange={(e) => setBlogForm(prev => ({ ...prev, title_hi: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
                   </div>
-                ) : listError ? (
-                  <div className="py-16 text-center">
-                    <AlertTriangle className="w-10 h-10 text-red-500 mx-auto mb-3" />
-                    <p className="text-sm font-semibold text-red-400">{listError}</p>
-                    <Button variant="outline" size="sm" onClick={fetchApks} className="mt-4 border-slate-800 text-slate-300 rounded-xl">
-                      Try Again
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Version</label>
+                      <Input
+                        placeholder="e.g. v1.0.0"
+                        value={blogForm.version}
+                        onChange={(e) => setBlogForm(prev => ({ ...prev, version: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">Category</label>
+                      <select
+                        value={blogForm.category}
+                        onChange={(e) => setBlogForm(prev => ({ ...prev, category: e.target.value as BlogUpdate['category'] }))}
+                        className="w-full bg-slate-950 border border-slate-800 text-white rounded-xl text-sm px-3 py-2"
+                      >
+                        <option value="release">Release</option>
+                        <option value="feature">Feature</option>
+                        <option value="improvement">Improvement</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Excerpt (English) *</label>
+                    <Textarea
+                      placeholder="Brief description of the update..."
+                      value={blogForm.excerpt_en}
+                      onChange={(e) => setBlogForm(prev => ({ ...prev, excerpt_en: e.target.value }))}
+                      className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Excerpt (Hindi)</label>
+                    <Textarea
+                      placeholder="अपडेट का संक्षिप्त विवरण..."
+                      value={blogForm.excerpt_hi}
+                      onChange={(e) => setBlogForm(prev => ({ ...prev, excerpt_hi: e.target.value }))}
+                      className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Bullet Points (English, one per line)</label>
+                    <Textarea
+                      placeholder="Feature one added&#10;Bug fix for XYZ&#10;Performance improvement"
+                      value={blogForm.bullets_en}
+                      onChange={(e) => setBlogForm(prev => ({ ...prev, bullets_en: e.target.value }))}
+                      className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm min-h-[100px] font-mono text-xs"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-slate-300">Bullet Points (Hindi, one per line)</label>
+                    <Textarea
+                      placeholder="फीचर वन जोड़ा गया&#10;XYZ के लिए बग फिक्स&#10;प्रदर्शन सुधार"
+                      value={blogForm.bullets_hi}
+                      onChange={(e) => setBlogForm(prev => ({ ...prev, bullets_hi: e.target.value }))}
+                      className="bg-slate-950 border border-slate-800 text-white rounded-xl text-sm min-h-[100px] font-mono text-xs"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">APK Download Link</label>
+                      <Input
+                        placeholder="https://..."
+                        value={blogForm.apkLink}
+                        onChange={(e) => setBlogForm(prev => ({ ...prev, apkLink: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-semibold text-slate-300">APK Size</label>
+                      <Input
+                        placeholder="e.g. ~27 MB"
+                        value={blogForm.apkSize}
+                        onChange={(e) => setBlogForm(prev => ({ ...prev, apkSize: e.target.value }))}
+                        className="bg-slate-950 border-slate-800 text-white rounded-xl text-sm"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+                <CardFooter className="px-5 pb-5 flex gap-2">
+                  <Button
+                    onClick={handleSaveBlog}
+                    disabled={!blogForm.title_en || !blogForm.excerpt_en}
+                    variant="emerald"
+                    className="flex-1 font-bold py-5 rounded-xl"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {editingBlog ? 'Update Post' : 'Create Post'}
+                  </Button>
+                  {editingBlog && (
+                    <Button
+                      onClick={resetBlogForm}
+                      variant="ghost"
+                      className="px-4 py-5 rounded-xl border border-slate-800"
+                    >
+                      <X className="w-4 h-4" />
                     </Button>
-                  </div>
-                ) : apks.length === 0 ? (
-                  <div className="py-20 text-center border border-dashed border-slate-800 rounded-2xl">
-                    <FileSpreadsheet className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                    <p className="text-sm font-semibold text-slate-400">No APK files found in Blob storage.</p>
-                    <p className="text-xs text-slate-600 max-w-xs mx-auto mt-1">
-                      Upload your first APK on the left panel to make it available for download.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-850 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                          <th className="pb-3 pl-2">Version</th>
-                          <th className="pb-3">Filename</th>
-                          <th className="pb-3">Size</th>
-                          <th className="pb-3">Uploaded At</th>
-                          <th className="pb-3 pr-2 text-right">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-850">
-                        {apks.map((apk, index) => (
-                          <tr key={index} className="text-xs text-slate-300 hover:bg-slate-900/20 group">
-                            <td className="py-4 pl-2 font-bold text-white">
-                              <div className="flex items-center gap-1.5">
-                                <Badge variant={index === 0 && !apk.isFallback ? "mint" : "outline"} className="px-2 py-0.5 text-[10px]">
-                                  v{apk.version}
-                                </Badge>
-                                {index === 0 && !apk.isFallback && (
-                                  <Badge variant="saffron" className="px-1.5 py-0 text-[8px] font-bold uppercase">Latest</Badge>
-                                )}
-                              </div>
-                            </td>
-                            <td className="py-4 font-mono text-slate-400 max-w-[200px] truncate" title={apk.pathname}>
-                              {apk.pathname}
-                            </td>
-                            <td className="py-4 text-slate-300">{formatSize(apk.size)}</td>
-                            <td className="py-4 text-slate-500 flex items-center gap-1.5 mt-0.5">
-                              <Calendar className="w-3.5 h-3.5" />
-                              <span>{formatDate(apk.uploadedAt)}</span>
-                            </td>
-                            <td className="py-4 pr-2 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  asChild 
-                                  className="h-8 w-8 rounded-xl p-0 hover:bg-slate-800 text-slate-400 hover:text-white"
-                                  title="Download File"
-                                >
-                                  <a href={apk.url} download target="_blank" rel="noreferrer">
-                                    <Download className="w-3.5 h-3.5" />
-                                  </a>
-                                </Button>
-                                {!apk.isFallback && (
-                                  <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    onClick={() => setApkToDelete(apk)}
-                                    className="h-8 w-8 rounded-xl p-0 hover:bg-red-500/10 text-slate-400 hover:text-red-400"
-                                    title="Delete Release"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </Button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-        </div>
-      </main>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={apkToDelete !== null} onOpenChange={(open) => { if (!open) setApkToDelete(null); }}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-white rounded-3xl p-6 max-w-sm">
-          <DialogHeader>
-            <div className="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center mx-auto mb-3">
-              <AlertTriangle className="w-6 h-6" />
+                  )}
+                </CardFooter>
+              </Card>
             </div>
-            <DialogTitle className="text-center text-lg font-bold">Confirm Deletion</DialogTitle>
-            <DialogDescription className="text-center text-xs text-slate-400">
-              Are you sure you want to delete <span className="font-semibold text-white font-mono">{apkToDelete?.pathname}</span>? 
-              This action is permanent and cannot be undone. Users will no longer be able to download this version.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-2 sm:gap-0 mt-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => setApkToDelete(null)}
-              className="flex-1 border border-slate-850 hover:bg-slate-800 text-slate-300 rounded-xl"
-              disabled={deleting}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDeleteApk}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl"
-              disabled={deleting}
-            >
-              {deleting ? (
-                <>
-                  <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
-                  <span>Deleting...</span>
-                </>
-              ) : (
-                <span>Delete Release</span>
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+            {/* Blog List */}
+            <div className="lg:col-span-7">
+              <Card className="bg-slate-900/60 border-slate-800 text-white rounded-3xl shadow-xl">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl font-bold tracking-tight">Blog Posts</CardTitle>
+                    <CardDescription className="text-slate-400 text-xs">
+                      {blogs.length} posts published
+                    </CardDescription>
+                  </div>
+                  <Badge variant="mint" className="px-2.5 py-1 text-[10px] font-bold">
+                    {blogs.length} Posts
+                  </Badge>
+                </CardHeader>
+                <CardContent>
+                  {loadingBlogs ? (
+                    <div className="py-16 flex justify-center">
+                      <Loader2 className="w-6 h-6 animate-spin text-emerald" />
+                    </div>
+                  ) : blogs.length === 0 ? (
+                    <div className="py-16 text-center border border-dashed border-slate-800 rounded-2xl">
+                      <FileText className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                      <p className="text-sm text-slate-400">No blog posts yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {blogs.map((blog) => (
+                        <div key={blog.id} className="bg-slate-950/50 border border-slate-800 rounded-2xl p-4 hover:border-slate-700 transition-colors">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                {blog.version && (
+                                  <Badge variant="outline" className="px-2 py-0.5 text-[10px]">
+                                    {blog.version}
+                                  </Badge>
+                                )}
+                                <Badge 
+                                  variant={blog.category === 'release' ? 'mint' : blog.category === 'feature' ? 'saffron' : 'outline'} 
+                                  className="px-2 py-0.5 text-[10px]"
+                                >
+                                  {blog.category}
+                                </Badge>
+                              </div>
+                              <h3 className="text-sm font-bold text-white truncate">{blog.title_en}</h3>
+                              <p className="text-xs text-slate-400 mt-1 line-clamp-2">{blog.excerpt_en}</p>
+                              <div className="flex items-center gap-2 mt-2 text-[10px] text-slate-500">
+                                <Calendar className="w-3 h-3" />
+                                <span>{blog.date_en}</span>
+                                {blog.apkSize && <span>• {blog.apkSize}</span>}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleEditBlog(blog)}
+                                className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteBlog(blog.id)}
+                                className="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

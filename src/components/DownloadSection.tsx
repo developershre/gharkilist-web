@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Download, QrCode, ShieldCheck, ChevronDown, ChevronUp, Calendar, FileDown } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/context/LanguageContext';
@@ -35,7 +35,6 @@ export default function DownloadSection() {
       });
   }, []);
 
-  // Determine latest APK, fallback to default meta if loading or empty
   const latestApk = apks[0] || {
     url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
     pathname: 'GharKiList-vbeta_0.0.6+1.apk',
@@ -84,7 +83,6 @@ export default function DownloadSection() {
     },
   ];
 
-  // Get older versions (all apks except the first/latest one)
   const olderApks = apks.slice(1);
 
   return (
@@ -92,6 +90,7 @@ export default function DownloadSection() {
       <div className="section-divider" />
       <div className="py-20 md:py-28 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
           <div className="text-center mb-14">
             <Badge variant="mint" className="mb-3 px-3 py-1 text-[11px] font-bold uppercase tracking-wider">
               {lang === 'hi' ? 'मुफ्त एंड्रॉइड ऐप' : 'Direct App Download'}
@@ -109,65 +108,72 @@ export default function DownloadSection() {
           <div className="grid lg:grid-cols-12 gap-8 items-center">
             {/* Release Spec & Download Card */}
             <div className="lg:col-span-7">
-              <Card className="bg-linear-to-br from-slate-900 via-slate-900 to-emerald-950 text-white border-none shadow-2xl p-6 sm:p-8 rounded-3xl relative overflow-hidden animate-fadeIn">
-                <div className="absolute top-0 right-0 w-80 h-80 bg-mint/10 rounded-full blur-3xl pointer-events-none" />
+              <Card className="bg-gradient-to-br from-[#1a2332] via-[#1e2a3a] to-[#1a3040] text-white border border-white/10 shadow-2xl p-6 sm:p-8 rounded-3xl relative overflow-hidden">
+                {/* Ambient glow */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-emerald/15 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                {/* App Info Header */}
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-6 relative z-10">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-white border border-slate-700/30 flex items-center justify-center p-1.5 shadow-lg">
+                    <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center p-2 shadow-lg">
                       <img src="/logo.png" alt="Gharkilist Logo" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-extrabold tracking-tight">Gharkilist (घर की लिस्ट)</h3>
-                      <p className="text-xs text-slate-300">
+                      <h3 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+                        Gharkilist <span className="text-white/60 font-bold text-lg">(घर की लिस्ट)</span>
+                      </h3>
+                      <p className="text-sm text-white/50 mt-0.5">
                         {lang === 'hi' ? 'एंड्रॉइड एप्लीकेशन · परीक्षण रिलीज़' : 'Android Application · Testing Release'}
                       </p>
                     </div>
                   </div>
-                  <Badge variant="saffron" className="px-3 py-1 font-extrabold text-xs animate-pulse">
+                  <Badge variant="saffron" className="px-3 py-1.5 font-extrabold text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
                     {loading ? 'v0.0.6 Beta (Testing)' : `v${latestApk.version} Beta (Testing)`}
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 mb-6 text-center">
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">File Size</span>
-                    <span className="text-sm sm:text-base font-extrabold text-white">
+                {/* Stats Row */}
+                <div className="grid grid-cols-3 gap-4 bg-white/5 border border-white/10 rounded-2xl p-5 mb-6 relative z-10">
+                  <div className="text-center">
+                    <span className="text-[11px] text-white/50 uppercase font-semibold block mb-1">File Size</span>
+                    <span className="text-lg sm:text-xl font-extrabold text-white">
                       {loading ? '~58.6 MB' : formatSize(latestApk.size)}
                     </span>
                   </div>
-                  <div className="border-x border-white/10">
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">Requirement</span>
-                    <span className="text-sm sm:text-base font-extrabold text-white">Android 7.0+</span>
+                  <div className="border-x border-white/10 text-center">
+                    <span className="text-[11px] text-white/50 uppercase font-semibold block mb-1">Requirement</span>
+                    <span className="text-lg sm:text-xl font-extrabold text-white">Android 7.0+</span>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">License</span>
-                    <span className="text-sm sm:text-base font-extrabold text-mint">100% Free</span>
+                  <div className="text-center">
+                    <span className="text-[11px] text-white/50 uppercase font-semibold block mb-1">License</span>
+                    <span className="text-lg sm:text-xl font-extrabold text-emerald-400">100% Free</span>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <Button variant="emerald" size="lg" asChild className="w-full justify-center gap-3 py-6 text-base font-bold shadow-xl shadow-emerald/30 hover:scale-[1.01] transition-transform">
+                {/* Download Button */}
+                <div className="space-y-4 relative z-10">
+                  <Button variant="emerald" size="lg" asChild className="w-full justify-center gap-3 py-7 text-base font-bold shadow-xl shadow-emerald/30 hover:scale-[1.01] transition-transform rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400">
                     <a href="/api/apks/latest">
-                      <Download className="w-5 h-5 animate-bounce" />
+                      <Download className="w-5 h-5" />
                       <span>
-                        {lang === 'hi' 
-                          ? `एंड्रॉइड ऐप डाउनलोड करें (v${latestApk.version})` 
+                        {lang === 'hi'
+                          ? `एंड्रॉइड ऐप डाउनलोड करें (v${latestApk.version})`
                           : `Download Android App v${latestApk.version}`}
                       </span>
                     </a>
                   </Button>
-                  <p className="text-[11px] text-center text-slate-400 flex items-center justify-center gap-1.5 pt-1">
-                    <ShieldCheck className="w-4 h-4 text-mint" />
-                    <span>Scanned with Google Play Protect &middot; Safe & Verified App</span>
+                  <p className="text-xs text-center text-white/40 flex items-center justify-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>Scanned with Google Play Protect · Safe & Verified App</span>
                   </p>
 
-                  <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
-                    <span className="text-[10px] text-slate-400 font-semibold uppercase block text-center">
+                  {/* Universal APK Info */}
+                  <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+                    <span className="text-[11px] text-white/40 font-semibold uppercase block text-center">
                       {lang === 'hi' ? 'यूनिवर्सल APK (v0.0.6+1):' : 'Universal APK (v0.0.6+1):'}
                     </span>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      <Button variant="outline" size="sm" asChild className="text-[11px] font-bold bg-white/5 border-white/10 hover:bg-white/10 hover:text-white rounded-xl text-slate-300 hover:border-emerald/40 transition-colors">
+                    <div className="flex justify-center">
+                      <Button variant="outline" size="sm" asChild className="text-xs font-bold bg-white/5 border-white/15 hover:bg-white/10 hover:text-white rounded-xl text-white/70 px-6 py-2 transition-colors">
                         <a href="https://github.com/developershre/gharkilist/releases/tag/beta_v0.0.6%2B1" target="_blank" rel="noreferrer">
                           {lang === 'hi' ? 'सभी डिवाइस के लिए' : 'All Devices'}
                         </a>
@@ -180,24 +186,24 @@ export default function DownloadSection() {
 
             {/* QR Code Scan Card */}
             <div className="lg:col-span-5">
-              <Card className="bg-white border-slate/15 shadow-xl p-6 rounded-3xl text-center flex flex-col items-center">
-                <div className="w-12 h-12 rounded-2xl bg-slate/5 border border-slate/10 flex items-center justify-center text-slate mb-4">
-                  <QrCode className="w-6 h-6 text-emerald" />
+              <Card className="bg-white border-slate/15 shadow-xl p-8 rounded-3xl text-center flex flex-col items-center">
+                <div className="w-14 h-14 rounded-2xl bg-emerald/10 border border-emerald/20 flex items-center justify-center mb-4">
+                  <QrCode className="w-7 h-7 text-emerald" />
                 </div>
-                <h3 className="text-lg font-bold text-slate mb-1">
+                <h3 className="text-xl font-bold text-slate mb-2">
                   {lang === 'hi' ? 'फोन से क्यूआर कोड स्कैन करें' : 'Scan to Download on Mobile'}
                 </h3>
-                <p className="text-xs text-slate/50 mb-4">
+                <p className="text-sm text-slate/50 mb-6 max-w-xs">
                   {lang === 'hi'
                     ? 'अपने स्मार्टफोन के कैमरे से स्कैन करें और तुरंत ऐप इंस्टॉल करें'
                     : 'Point your camera to scan QR code and open direct download link'}
                 </p>
 
-                {/* Actual QR Code Box */}
-                <div className="w-40 h-40 bg-white rounded-2xl p-2 border-4 border-emerald/20 flex items-center justify-center shadow-md mb-3 overflow-hidden">
+                {/* QR Code Box */}
+                <div className="w-44 h-44 bg-white rounded-2xl p-3 border-4 border-emerald/20 flex items-center justify-center shadow-lg mb-4 overflow-hidden">
                   <img src="/qr.png" alt="Gharkilist Download QR Code" className="w-full h-full object-contain" />
                 </div>
-                <Badge variant="outline" className="text-[10px] text-slate/60">
+                <Badge variant="outline" className="text-xs text-slate/50 px-3 py-1">
                   direct link: gharkilist app
                 </Badge>
               </Card>
@@ -205,7 +211,7 @@ export default function DownloadSection() {
           </div>
 
           {/* Beta Testing Feedback Callout */}
-          <div className="mt-12 bg-emerald/[0.03] border border-emerald/10 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 animate-fadeIn">
+          <div className="mt-12 bg-emerald/[0.03] border border-emerald/10 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 text-center md:text-left">
               <Badge variant="saffron" className="px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-600 border-amber-500/20">
                 {lang === 'hi' ? 'फीडबैक आवश्यक' : 'Feedback Wanted'}
@@ -235,9 +241,9 @@ export default function DownloadSection() {
 
           {/* Older Versions Section */}
           {!loading && olderApks.length > 0 && (
-            <div className="mt-12 pt-8 border-t border-slate/10 text-center animate-fadeIn">
-              <Button 
-                variant="outline" 
+            <div className="mt-12 pt-8 border-t border-slate/10 text-center">
+              <Button
+                variant="outline"
                 onClick={() => setShowOlder(!showOlder)}
                 className="gap-2 border-slate/15 text-slate/70 hover:text-emerald hover:border-emerald/40 hover:bg-emerald/5 rounded-2xl px-6 py-5 font-bold transition-all shadow-sm"
               >
@@ -293,16 +299,16 @@ export default function DownloadSection() {
                               <span>{formatDate(apk.uploadedAt)}</span>
                             </td>
                             <td className="py-3.5 pr-2 text-right">
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                asChild 
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                asChild
                                 className="h-8 w-8 rounded-xl p-0 hover:bg-emerald/5 hover:text-emerald text-slate-400"
                                 title="Download Version"
                               >
-                                <a 
-                                  href={apk.url} 
-                                  target={apk.url.startsWith('http') ? '_blank' : undefined} 
+                                <a
+                                  href={apk.url}
+                                  target={apk.url.startsWith('http') ? '_blank' : undefined}
                                   rel={apk.url.startsWith('http') ? 'noreferrer' : undefined}
                                   download={!apk.url.startsWith('http') ? '' : undefined}
                                 >
@@ -320,7 +326,7 @@ export default function DownloadSection() {
             </div>
           )}
 
-          {/* 3 Step Installation Walkthrough */}
+          {/* 3 Step Installation Guide */}
           <div className="mt-16 pt-10 border-t border-slate/10">
             <h3 className="text-xl font-extrabold text-slate text-center mb-8">
               {lang === 'hi' ? 'आसान 3-स्टेप इंस्टॉलेशन गाइड' : 'Simple 3-Step Installation Guide'}

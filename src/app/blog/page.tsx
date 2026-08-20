@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
@@ -13,7 +13,8 @@ import {
   Sparkles,
   Info,
   Clock,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -38,7 +39,7 @@ interface BlogUpdate {
   apkSize?: string;
 }
 
-const BLOG_UPDATES: BlogUpdate[] = [
+const DEFAULT_BLOG_UPDATES: BlogUpdate[] = [
   {
     id: 'update-006',
     version: 'v0.0.6',
@@ -226,15 +227,41 @@ export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<'all' | 'release' | 'feature' | 'improvement'>('all');
   const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({
-    'update-006': true, // Keep the latest update expanded by default
+    'update-006': true,
   });
+  const [blogPosts, setBlogPosts] = useState<BlogUpdate[]>(DEFAULT_BLOG_UPDATES);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBlogPosts();
+  }, []);
+
+  const fetchBlogPosts = async () => {
+    try {
+      const res = await fetch('/api/blog');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.length > 0) {
+          setBlogPosts(data);
+          // Auto-expand the latest post
+          if (data[0]?.id) {
+            setExpandedNotes({ [data[0].id]: true });
+          }
+        }
+      }
+    } catch {
+      // Use default blog posts on error
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleExpand = (id: string) => {
     setExpandedNotes((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const filteredUpdates = useMemo(() => {
-    return BLOG_UPDATES.filter((post) => {
+    return blogPosts.filter((post) => {
       const matchesCategory = activeCategory === 'all' || post.category === activeCategory;
       const titleText = lang === 'hi' ? post.title_hi : post.title_en;
       const excerptText = lang === 'hi' ? post.excerpt_hi : post.excerpt_en;
@@ -245,7 +272,7 @@ export default function BlogPage() {
       
       return matchesCategory && matchesSearch;
     });
-  }, [activeCategory, searchQuery, lang]);
+  }, [activeCategory, searchQuery, lang, blogPosts]);
 
   const categories = [
     { id: 'all', label_en: 'All Updates', label_hi: 'सभी अपडेट्स' },
@@ -301,18 +328,18 @@ export default function BlogPage() {
           </div>
 
           {/* Interactive Filters and Search Row */}
-          <div className="bg-white/80 backdrop-blur-md border border-slate/10 p-3 rounded-2xl shadow-sm mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-slide-up">
-            
+          <div className="bg-white/90 backdrop-blur-sm border border-slate/8 p-2 rounded-2xl shadow-sm mb-12 flex flex-col md:flex-row md:items-center justify-between gap-3 animate-slide-up">
+
             {/* Filter Pills */}
-            <div className="flex gap-1.5 overflow-x-auto scrollbar-none pb-1 md:pb-0">
+            <div className="flex gap-1 overflow-x-auto scrollbar-none pb-1 md:pb-0">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id as any)}
-                  className={`px-4 py-1.8 rounded-xl text-xs font-bold whitespace-nowrap transition-all border ${
+                  className={`px-4 py-2 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all duration-200 ${
                     activeCategory === cat.id
-                      ? 'bg-emerald text-white border-emerald shadow-xs'
-                      : 'bg-white text-slate/60 border-slate-200 hover:text-slate hover:bg-slate-50'
+                      ? 'bg-[#03B459] text-white shadow-sm shadow-emerald/20'
+                      : 'bg-slate/5 text-slate/60 hover:text-slate hover:bg-slate/10'
                   }`}
                 >
                   {lang === 'hi' ? cat.label_hi : cat.label_en}
@@ -327,15 +354,20 @@ export default function BlogPage() {
                 placeholder={lang === 'hi' ? 'अपडेट सर्च करें...' : 'Search updates...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.8 text-xs rounded-xl border border-slate-200 outline-none focus:border-emerald text-slate bg-white placeholder:text-slate/40 shadow-inner"
+                className="w-full pl-9 pr-3 py-2 text-[11px] rounded-xl border border-slate/10 outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/20 text-slate bg-slate/5 placeholder:text-slate/40 transition-all duration-200"
               />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
 
           </div>
 
           {/* Chronological Changelog Timeline */}
-          {filteredUpdates.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-20 bg-white/50 backdrop-blur-md border border-slate-100 rounded-3xl p-8">
+              <Loader2 className="w-10 h-10 text-emerald mx-auto mb-3 animate-spin" />
+              <h3 className="text-sm font-bold text-slate-700">{lang === 'hi' ? 'लोड हो रहा है...' : 'Loading updates...'}</h3>
+            </div>
+          ) : filteredUpdates.length === 0 ? (
             <div className="text-center py-20 bg-white/50 backdrop-blur-md border border-slate-100 rounded-3xl p-8">
               <Info className="w-10 h-10 text-slate-300 mx-auto mb-3" />
               <h3 className="text-sm font-bold text-slate-700">{lang === 'hi' ? 'कोई अपडेट नहीं मिला' : 'No Updates Found'}</h3>
