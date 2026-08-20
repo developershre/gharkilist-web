@@ -96,7 +96,7 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.15s' }}>
               <Button size="lg" variant="emerald" asChild className="gap-2.5 bg-[#03B459] hover:bg-[#03B459]/90 shadow-lg shadow-emerald/20 text-base font-bold py-6 px-8 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200">
-                <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
+                <a href="https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk" target="_blank" rel="noreferrer">
                   <Download className="w-5 h-5" />
                   <span>{lang === 'hi' ? 'ऐप डाउनलोड करें (मुफ्त)' : 'Download Free App'}</span>
                 </a>

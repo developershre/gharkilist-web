@@ -108,7 +108,7 @@ export default function Header() {
           </Button>
 
           <Button variant="emerald" size="sm" asChild className="gap-2 shadow-sm shadow-emerald/20">
-            <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
+            <a href="https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk" target="_blank" rel="noreferrer">
               <Download className="w-4 h-4" />
               <span>{lang === 'hi' ? 'ऐप डाउनलोड करें' : 'Download App'}</span>
             </a>
@@ -153,7 +153,7 @@ export default function Header() {
           ))}
           <div className="pt-2 border-t border-slate/10">
             <Button variant="emerald" size="default" asChild className="w-full justify-center gap-2">
-              <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer" onClick={() => setMobileOpen(false)}>
+              <a href="https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk" target="_blank" rel="noreferrer" onClick={() => setMobileOpen(false)}>
                 <Download className="w-4 h-4" />
                 <span>{lang === 'hi' ? 'ऐप डाउनलोड करें' : 'Download Free App'}</span>
               </a>

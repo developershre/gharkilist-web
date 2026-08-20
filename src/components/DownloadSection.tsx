@@ -37,11 +37,11 @@ export default function DownloadSection() {
 
   // Determine latest APK, fallback to default meta if loading or empty
   const latestApk = apks[0] || {
-    url: '/api/apks/latest',
-    pathname: 'GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
-    size: 22031124,
-    uploadedAt: new Date('2026-08-19T22:48:00Z').toISOString(),
-    version: '0.0.6',
+    url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
+    pathname: 'GharKiList-vbeta_0.0.6+1.apk',
+    size: 28323994,
+    uploadedAt: new Date('2026-08-20T08:22:18Z').toISOString(),
+    version: '0.0.6+1',
     isFallback: true,
   };
 
@@ -164,17 +164,12 @@ export default function DownloadSection() {
 
                   <div className="mt-4 pt-4 border-t border-white/10 space-y-2">
                     <span className="text-[10px] text-slate-400 font-semibold uppercase block text-center">
-                      {lang === 'hi' ? 'अन्य डिवाइस आर्किटेक्चर (v0.0.6):' : 'Other Device Architectures (v0.0.6):'}
+                      {lang === 'hi' ? 'यूनिवर्सल APK (v0.0.6+1):' : 'Universal APK (v0.0.6+1):'}
                     </span>
                     <div className="flex flex-wrap justify-center gap-2">
                       <Button variant="outline" size="sm" asChild className="text-[11px] font-bold bg-white/5 border-white/10 hover:bg-white/10 hover:text-white rounded-xl text-slate-300 hover:border-emerald/40 transition-colors">
-                        <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
-                          {lang === 'hi' ? 'पुराने फोन (32-bit)' : 'Older Phones (32-bit)'}
-                        </a>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild className="text-[11px] font-bold bg-white/5 border-white/10 hover:bg-white/10 hover:text-white rounded-xl text-slate-300 hover:border-emerald/40 transition-colors">
-                        <a href="https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6" target="_blank" rel="noreferrer">
-                          {lang === 'hi' ? 'पीसी / एमुलेटर (x86_64)' : 'PC / Emulator (x86_64)'}
+                        <a href="https://github.com/developershre/gharkilist/releases/tag/beta_v0.0.6%2B1" target="_blank" rel="noreferrer">
+                          {lang === 'hi' ? 'सभी डिवाइस के लिए' : 'All Devices'}
                         </a>
                       </Button>
                     </div>

@@ -8,84 +8,35 @@ export interface ApkRelease {
 }
 
 export const FALLBACK_APK: ApkRelease = {
-  url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6',
-  pathname: 'GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
-  size: 22031124,
-  uploadedAt: new Date('2026-08-19T22:48:00Z').toISOString(),
-  version: '0.0.6',
+  url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
+  pathname: 'GharKiList-vbeta_0.0.6+1.apk',
+  size: 28323994,
+  uploadedAt: new Date('2026-08-20T08:22:18Z').toISOString(),
+  version: '0.0.6+1',
   isFallback: true,
 };
 
 export const OLDER_APKS: ApkRelease[] = [
   {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6',
-    pathname: 'gharkilist-v0.0.6-Modern_Phones-64bit.apk',
+    url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
+    pathname: 'GharKiList-vbeta_0.0.6+1.apk',
+    size: 28323994,
+    uploadedAt: new Date('2026-08-20T08:22:18Z').toISOString(),
+    version: '0.0.6+1',
+    isFallback: false,
+  },
+  {
+    url: 'https://github.com/developershre/gharkilist/releases/download/beta-v0.0.6/GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
+    pathname: 'GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
     size: 22031124,
     uploadedAt: new Date('2026-08-19T22:00:00Z').toISOString(),
     version: '0.0.6',
     isFallback: false,
   },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6',
-    pathname: 'gharkilist-v0.0.6-Older_Phones-32bit.apk',
-    size: 19542056,
-    uploadedAt: new Date('2026-08-19T22:00:00Z').toISOString(),
-    version: '0.0.6',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.6',
-    pathname: 'gharkilist-v0.0.6-PC_Emulators-x86_64.apk',
-    size: 23423408,
-    uploadedAt: new Date('2026-08-19T22:00:00Z').toISOString(),
-    version: '0.0.6',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.5',
-    pathname: 'gharkilist-v0.0.5',
-    size: 0,
-    uploadedAt: new Date('2026-08-19T22:00:00Z').toISOString(),
-    version: '0.0.5',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.4',
-    pathname: 'gharkilist-v0.0.4',
-    size: 0,
-    uploadedAt: new Date('2026-08-19T18:00:00Z').toISOString(),
-    version: '0.0.4',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.3',
-    pathname: 'gharkilist-v0.0.3',
-    size: 0,
-    uploadedAt: new Date('2026-08-17T18:00:00Z').toISOString(),
-    version: '0.0.3',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.2',
-    pathname: 'gharkilist-v0.0.2',
-    size: 0,
-    uploadedAt: new Date('2026-08-16T18:00:00Z').toISOString(),
-    version: '0.0.2',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/tag/beta-v0.0.1',
-    pathname: 'gharkilist-v0.0.1',
-    size: 0,
-    uploadedAt: new Date('2026-08-14T18:00:00Z').toISOString(),
-    version: '0.0.1',
-    isFallback: false,
-  }
 ];
 
 export function parseVersion(pathname: string): string {
-  // Matches version patterns like v1.0.0, v1.0.1, 0.0.6, etc.
-  const match = pathname.match(/v?(\d+\.\d+(?:\.\d+)?(?:-[a-zA-Z0-9.]+)?)/i);
+  const match = pathname.match(/v?(\d+\.\d+(?:\.\d+)?(?:\+\d+)?(?:-[a-zA-Z0-9.]+)?)/i);
   return match ? match[1] : '0.0.0';
 }
 
@@ -93,8 +44,8 @@ export function compareVersions(a: string, b: string): number {
   const cleanA = a.replace(/^v/i, '');
   const cleanB = b.replace(/^v/i, '');
 
-  const aParts = cleanA.split(/[.-]/).map(x => parseInt(x, 10) || 0);
-  const bParts = cleanB.split(/[.-]/).map(x => parseInt(x, 10) || 0);
+  const aParts = cleanA.split(/[.+/-]/).map(x => parseInt(x, 10) || 0);
+  const bParts = cleanB.split(/[.+/-]/).map(x => parseInt(x, 10) || 0);
 
   for (let i = 0; i < Math.max(aParts.length, bParts.length); i++) {
     const aVal = aParts[i] || 0;
