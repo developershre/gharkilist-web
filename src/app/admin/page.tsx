@@ -382,7 +382,7 @@ export default function AdminPage() {
 
     const blogData = {
       content_en: blogForm.content_en,
-      content_hi: blogForm.content_hi || blogForm.content_en,
+      content_hi: "", // Send empty so backend live-translates English to Hindi
     };
 
     try {
@@ -957,17 +957,10 @@ export default function AdminPage() {
                   )}
 
                   <RichTextEditor
-                    label="Blog Content (English) *"
+                    label="Blog Content *"
                     placeholder="Write your blog post in English. The first line (Heading/Bold) will be used as the Title."
                     value={blogForm.content_en}
                     onChange={(val) => setBlogForm(prev => ({ ...prev, content_en: val }))}
-                  />
-
-                  <RichTextEditor
-                    label="Blog Content (Hindi)"
-                    placeholder="हिंदी में अपना ब्लॉग पोस्ट लिखें। पहली पंक्ति का उपयोग शीर्षक के रूप में किया जाएगा।"
-                    value={blogForm.content_hi}
-                    onChange={(val) => setBlogForm(prev => ({ ...prev, content_hi: val }))}
                   />
                 </CardContent>
                 <CardFooter className="px-5 pb-5 flex gap-2">
