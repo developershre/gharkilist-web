@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 export const metadata: Metadata = {
   title: "Gharkilist (घर की लिस्ट) — Smart Pantry & Kirana List Manager for Indian Homes",
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en" className="h-full antialiased scroll-smooth">
       <body className="min-h-full flex flex-col font-sans bg-background text-foreground">
         <LanguageProvider>
+          <AnalyticsTracker />
           {children}
         </LanguageProvider>
       </body>

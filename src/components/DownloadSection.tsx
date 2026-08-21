@@ -36,11 +36,11 @@ export default function DownloadSection() {
   }, []);
 
   const latestApk = apks[0] || {
-    url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
-    pathname: 'GharKiList-vbeta_0.0.6+1.apk',
-    size: 28323994,
-    uploadedAt: new Date('2026-08-20T08:22:18Z').toISOString(),
-    version: '0.0.6+1',
+    url: 'https://zbswyacaz2jb2esm.public.blob.vercel-storage.com/GharKiList-vbeta_0.0.6%2B2.apk',
+    pathname: 'GharKiList-vbeta_0.0.6+2.apk',
+    size: 28442720,
+    uploadedAt: new Date('2026-08-20T15:36:27Z').toISOString(),
+    version: '0.0.6+2',
     isFallback: true,
   };
 
@@ -167,19 +167,7 @@ export default function DownloadSection() {
                     <span>Scanned with Google Play Protect · Safe & Verified App</span>
                   </p>
 
-                  {/* Universal APK Info */}
-                  <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
-                    <span className="text-[11px] text-white/40 font-semibold uppercase block text-center">
-                      {lang === 'hi' ? 'यूनिवर्सल APK (v0.0.6+1):' : 'Universal APK (v0.0.6+1):'}
-                    </span>
-                    <div className="flex justify-center">
-                      <Button variant="outline" size="sm" asChild className="text-xs font-bold bg-white/5 border-white/15 hover:bg-white/10 hover:text-white rounded-xl text-white/70 px-6 py-2 transition-colors">
-                        <a href="https://github.com/developershre/gharkilist/releases/tag/beta_v0.0.6%2B1" target="_blank" rel="noreferrer">
-                          {lang === 'hi' ? 'सभी डिवाइस के लिए' : 'All Devices'}
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
+
                 </div>
               </Card>
             </div>

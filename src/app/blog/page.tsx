@@ -37,6 +37,8 @@ interface BlogUpdate {
   bullets_hi: string[];
   apkLink?: string;
   apkSize?: string;
+  content_en?: string;
+  content_hi?: string;
 }
 
 const DEFAULT_BLOG_UPDATES: BlogUpdate[] = [
@@ -445,11 +447,18 @@ export default function BlogPage() {
 
                         {isExpanded && (
                           <div className="mt-4 bg-slate-50/60 border border-slate-100 rounded-xl p-5 animate-slide-up">
-                            <ul className="space-y-3 text-sm text-slate-650 list-disc pl-5 leading-relaxed">
-                              {(lang === 'hi' ? post.bullets_hi : post.bullets_en).map((bullet, idx) => (
-                                <li key={idx} className="marker:text-mint">{bullet}</li>
-                              ))}
-                            </ul>
+                            {((lang === 'hi' ? post.content_hi : post.content_en) || (lang === 'en' ? post.content_en : post.content_hi)) ? (
+                              <div 
+                                className="text-sm text-slate-600 leading-relaxed blog-content-html space-y-2.5"
+                                dangerouslySetInnerHTML={{ __html: lang === 'hi' ? (post.content_hi || post.content_en || '') : (post.content_en || post.content_hi || '') }}
+                              />
+                            ) : (
+                              <ul className="space-y-3 text-sm text-slate-650 list-disc pl-5 leading-relaxed">
+                                {(lang === 'hi' ? post.bullets_hi : post.bullets_en).map((bullet, idx) => (
+                                  <li key={idx} className="marker:text-mint">{bullet}</li>
+                                ))}
+                              </ul>
+                            )}
 
                             {/* Direct Download Badge & APK info for releases */}
                             {post.category === 'release' && post.apkLink && (

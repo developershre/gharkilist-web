@@ -12,6 +12,8 @@ export interface BlogUpdate {
   bullets_hi: string[];
   apkLink?: string;
   apkSize?: string;
+  content_en?: string;
+  content_hi?: string;
 }
 
 export const INITIAL_BLOG_POSTS: BlogUpdate[] = [
@@ -35,7 +37,7 @@ export const INITIAL_BLOG_POSTS: BlogUpdate[] = [
       "V1/V2 साइनिंग: Android संस्करणों में सुसंगत सत्यापन के लिए दोनों साइनिंग कॉन्फ़िगरेशन सक्षम।",
       "नेटिव लाइब्रेरी एक्सट्रैक्शन: इंस्टॉलेशन क्रैश को रोकने के लिए extractNativeLibs=true सेट।"
     ],
-    apkLink: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
+    apkLink: '/api/apks/latest',
     apkSize: '~27 MB'
   },
   {
@@ -56,7 +58,7 @@ export const INITIAL_BLOG_POSTS: BlogUpdate[] = [
       "ड्रैग-एंड-ड्रॉप रीऑर्डरिंग: श्रेणी, खोज क्वेरी या स्टॉक स्थिति के अनुसार फ़िल्टर करते समय आइटम रीऑर्डरिंग में गलत इंडेक्स मैपिंग को ठीक किया गया।",
       "विज़ुअल ऑर्डर मैपिंग: रीऑर्डर लॉजिक अब विज़ुअल सूची की स्थिति को डेटाबेस ऑर्डर इंडेक्स पर सही ढंग से मैप करता है।"
     ],
-    apkLink: 'https://github.com/developershre/gharkilist/releases/download/beta-v0.0.6/GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
+    apkLink: '/api/apks/latest',
     apkSize: '~21 MB'
   }
 ];

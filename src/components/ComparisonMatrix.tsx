@@ -34,12 +34,12 @@ export default function ComparisonMatrix() {
       gharkilist_hi: '1-टैप में WhatsApp लिस्ट एक्सपोर्ट',
     },
     {
-      feature_en: 'Privacy & Internet Requirement',
-      feature_hi: 'प्राइवेसी और इंटरनेट की जरूरत',
+      feature_en: 'Privacy & Sync Features',
+      feature_hi: 'प्राइवेसी और सिंक फीचर्स',
       generic_en: 'Requires online account & tracking',
       generic_hi: 'अकाउंट व ट्रैकिंग अनिवार्य',
-      gharkilist_en: '100% Offline SQLite, Zero Tracking',
-      gharkilist_hi: '100% ऑफ़लाइन SQLite, ज़ीरो ट्रैकिंग',
+      gharkilist_en: 'Offline In-App DB + Optional Cloud Sync',
+      gharkilist_hi: 'ऑफ़लाइन इन-ऐप डेटाबेस + ऐच्छिक क्लाउड सिंक',
     },
     {
       feature_en: 'Indian Pooja & Festival Lists',
@@ -70,7 +70,8 @@ export default function ComparisonMatrix() {
             </p>
           </div>
 
-          <Card className="overflow-hidden border-slate/15 shadow-xl bg-white">
+          <Card className="overflow-hidden border border-slate-200/50 shadow-2xl bg-white/90 rounded-3xl backdrop-blur-sm relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald via-saffron to-mint" />
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[640px]">
                 <thead>
@@ -101,8 +102,8 @@ export default function ComparisonMatrix() {
 
                       <td className="py-4 px-6 text-slate/60">
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
-                            <X className="w-3 h-3" />
+                          <div className="w-5 h-5 rounded-full bg-rose-50 border border-rose-100 text-rose-500 flex items-center justify-center flex-shrink-0 shadow-xs">
+                            <X className="w-2.5 h-2.5" />
                           </div>
                           <span>{lang === 'hi' ? row.generic_hi : row.generic_en}</span>
                         </div>
@@ -110,8 +111,8 @@ export default function ComparisonMatrix() {
 
                       <td className="py-4 px-6 bg-emerald/[0.02] font-semibold text-slate">
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full bg-emerald text-white flex items-center justify-center flex-shrink-0">
-                            <Check className="w-3 h-3" />
+                          <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-emerald to-mint text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                            <Check className="w-2.5 h-2.5" />
                           </div>
                           <span className="text-emerald font-bold">
                             {lang === 'hi' ? row.gharkilist_hi : row.gharkilist_en}

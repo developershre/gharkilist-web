@@ -7,11 +7,15 @@ import { Download, Menu, X, Globe, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/context/LanguageContext';
+import { motion } from 'framer-motion';
+
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { lang, toggleLang } = useLanguage();
+
   const pathname = usePathname();
   const isBlog = pathname === '/blog';
 
@@ -82,14 +86,25 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-1 bg-white/70 backdrop-blur-md border border-slate/10 p-1.5 rounded-full shadow-xs">
-          {navLinks.map((link) => (
+        <nav 
+          onMouseLeave={() => setHoveredIndex(null)}
+          className="hidden md:flex items-center gap-1 bg-white/70 backdrop-blur-md border border-slate/10 p-1.5 rounded-full shadow-xs relative"
+        >
+          {navLinks.map((link, idx) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className="text-[13px] font-medium text-slate/70 hover:text-emerald px-4 py-1.5 rounded-full hover:bg-slate/5 transition-all"
+              onMouseEnter={() => setHoveredIndex(idx)}
+              className="text-[13px] font-medium text-slate/75 hover:text-emerald px-4 py-1.5 rounded-full transition-all relative z-10"
             >
+              {hoveredIndex === idx && (
+                <motion.span
+                  layoutId="navHoverIndicator"
+                  className="absolute inset-0 bg-slate-100 rounded-full -z-10"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
               {link.label}
             </Link>
           ))}
@@ -108,7 +123,7 @@ export default function Header() {
           </Button>
 
           <Button variant="emerald" size="sm" asChild className="gap-2 shadow-sm shadow-emerald/20">
-            <a href="https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk" target="_blank" rel="noreferrer">
+            <a href="/api/apks/latest" target="_blank" rel="noreferrer">
               <Download className="w-4 h-4" />
               <span>{lang === 'hi' ? 'ऐप डाउनलोड करें' : 'Download App'}</span>
             </a>
@@ -153,7 +168,7 @@ export default function Header() {
           ))}
           <div className="pt-2 border-t border-slate/10">
             <Button variant="emerald" size="default" asChild className="w-full justify-center gap-2">
-              <a href="https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk" target="_blank" rel="noreferrer" onClick={() => setMobileOpen(false)}>
+              <a href="/api/apks/latest" target="_blank" rel="noreferrer" onClick={() => setMobileOpen(false)}>
                 <Download className="w-4 h-4" />
                 <span>{lang === 'hi' ? 'ऐप डाउनलोड करें' : 'Download Free App'}</span>
               </a>

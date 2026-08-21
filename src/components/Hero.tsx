@@ -7,10 +7,36 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import IPhoneMockup from '@/components/IPhoneMockup';
 import { useLanguage } from '@/context/LanguageContext';
+import { motion, Variants } from 'framer-motion';
+
 
 export default function Hero() {
   const phoneRef = useRef<HTMLDivElement>(null);
   const { lang } = useLanguage();
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+  };
+
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -53,23 +79,31 @@ export default function Hero() {
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
           {/* Left Column */}
-          <div className="lg:col-span-7 text-center lg:text-left">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="lg:col-span-7 text-center lg:text-left"
+          >
             {/* Status badge */}
-            <div className="inline-flex items-center gap-2 bg-[#03B459]/[0.08] border border-[#03B459]/20 rounded-full px-4 py-1.5 mb-6 animate-slide-up">
+            <motion.div
+              variants={itemVariants}
+              className="inline-flex items-center gap-2 bg-[#03B459]/[0.08] border border-[#03B459]/20 rounded-full px-4 py-1.5 mb-6"
+            >
               <span className="w-2 h-2 rounded-full bg-[#03B459] animate-pulse" />
               <span className="text-[11px] font-bold text-[#03B459] tracking-wider uppercase">
                 {lang === 'hi'
-                  ? 'पब्लिक बीटा टेस्टिंग • 100% ऑफ़लाइन • भारतीय रसोई के लिए'
-                  : 'Public Beta Testing • 100% Offline • Built for Indian Kitchens'}
+                  ? 'पब्लिक बीटा टेस्टिंग • फ्री ट्रायल • भारतीय रसोई के लिए'
+                  : 'Public Beta Testing • Free Trial • Built for Indian Kitchens'}
               </span>
-            </div>
+            </motion.div>
 
             {/* Main heading */}
-            <h1
-              className={`text-3xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-slate tracking-tight mb-5 animate-slide-up ${
+            <motion.h1
+              variants={itemVariants}
+              className={`text-3xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-slate tracking-tight mb-5 ${
                 lang === 'hi' ? 'leading-tight' : 'leading-[1.1]'
               }`}
-              style={{ animationDelay: '0.05s' }}
             >
               {lang === 'hi' ? (
                 <>
@@ -94,19 +128,25 @@ export default function Hero() {
                   List Manager for Indian Homes.
                 </>
               )}
-            </h1>
+            </motion.h1>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-slate/55 leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <motion.p
+              variants={itemVariants}
+              className="text-base sm:text-lg text-slate/55 leading-relaxed mb-8 max-w-xl mx-auto lg:mx-0"
+            >
               {lang === 'hi'
                 ? 'कागज़ की सूचियों और बारकोड ऐप को कहें अलविदा जो खुले आटा या दालों को नहीं पहचानते। रसोई स्टॉक को ट्रैक करें, ₹ में बजट निकालें और WhatsApp पर किराना भेजें।'
                 : 'Say goodbye to paper lists and barcode apps that fail on loose Atta or Dals. Track pantry stock, compute budget in ₹, and order via WhatsApp in one tap.'}
-            </p>
+            </motion.p>
 
             {/* CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.15s' }}>
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start"
+            >
               <Button size="lg" variant="emerald" asChild className="gap-2.5 bg-[#03B459] hover:bg-[#03B459]/90 shadow-lg shadow-emerald/20 text-[15px] font-bold py-6 px-7 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-2xl">
-                <a href="https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk" target="_blank" rel="noreferrer">
+                <a href="/api/apks/latest" target="_blank" rel="noreferrer">
                   <Download className="w-5 h-5" />
                   <span>{lang === 'hi' ? 'ऐप डाउनलोड करें (मुफ्त)' : 'Download Free App'}</span>
                 </a>
@@ -127,30 +167,58 @@ export default function Hero() {
                   <span>{lang === 'hi' ? 'लाइव डेमो चलाएं' : 'Try Interactive Demo'}</span>
                 </Link>
               </Button>
-            </div>
+            </motion.div>
 
             {/* Trust badges */}
-            <div className="mt-8 flex flex-wrap items-center gap-2.5 justify-center lg:justify-start animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <motion.div
+              variants={itemVariants}
+              className="mt-8 flex flex-wrap items-center gap-2.5 justify-center lg:justify-start"
+            >
               <span className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-slate/8 shadow-xs">
                 <ShieldCheck className="w-4 h-4 text-[#03B459]" />
                 <span className="text-[11px] font-semibold text-slate/60">{lang === 'hi' ? 'कोई लॉगिन नहीं' : 'No login required'}</span>
               </span>
               <span className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-slate/8 shadow-xs">
                 <WifiOff className="w-4 h-4 text-[#03B459]" />
-                <span className="text-[11px] font-semibold text-slate/60">{lang === 'hi' ? '100% प्राइवेट व ऑफ़लाइन' : '100% Private (Local SQLite)'}</span>
+                <span className="text-[11px] font-semibold text-slate/60">{lang === 'hi' ? 'ऑफ़लाइन लोकल डेटाबेस' : 'Offline In-App DB'}</span>
               </span>
               <span className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm px-3.5 py-2 rounded-full border border-slate/8 shadow-xs">
                 <CheckCircle2 className="w-4 h-4 text-mint" />
-                <span className="text-[11px] font-semibold text-slate/60">{lang === 'hi' ? 'कोई छिपा शुल्क नहीं' : 'No Hidden Fees'}</span>
+                <span className="text-[11px] font-semibold text-slate/60">{lang === 'hi' ? 'बीटा में पूरी तरह मुफ्त' : 'Free during Beta'}</span>
               </span>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          {/* Right Column: Phone Mockup Hub */}
           <div className="lg:col-span-5 relative flex justify-center w-full mt-8 lg:mt-0">
+            {/* Glowing mesh background behind phone */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-tr from-emerald/15 via-[#03B459]/10 to-saffron/15 rounded-full blur-3xl pointer-events-none animate-pulse-subtle z-0" />
+            
+            {/* Floating food icons in background */}
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="absolute top-12 left-0 w-12 h-12 rounded-2xl bg-white border border-slate-100/80 flex items-center justify-center text-xl shadow-md z-20 pointer-events-none hidden sm:flex"
+            >
+              🌾
+            </motion.div>
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+              className="absolute top-1/3 -right-6 w-12 h-12 rounded-2xl bg-white border border-slate-100/80 flex items-center justify-center text-xl shadow-md z-20 pointer-events-none hidden sm:flex"
+            >
+              🌶️
+            </motion.div>
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+              className="absolute bottom-16 left-2 w-12 h-12 rounded-2xl bg-white border border-slate-100/80 flex items-center justify-center text-xl shadow-md z-20 pointer-events-none hidden sm:flex"
+            >
+              🪔
+            </motion.div>
+
             <div
               ref={phoneRef}
-              className="relative w-full max-w-[340px] sm:max-w-[400px] transition-all duration-300 ease-out select-none"
+              className="relative w-full max-w-[340px] sm:max-w-[400px] transition-all duration-300 ease-out select-none z-10"
               style={{ transformStyle: 'preserve-3d' }}
             >
               {/* iPhone App Screen */}

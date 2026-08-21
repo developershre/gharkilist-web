@@ -1,3 +1,5 @@
+import { getDb } from './db';
+
 export interface ApkRelease {
   url: string;
   pathname: string;
@@ -8,32 +10,15 @@ export interface ApkRelease {
 }
 
 export const FALLBACK_APK: ApkRelease = {
-  url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
-  pathname: 'GharKiList-vbeta_0.0.6+1.apk',
-  size: 28323994,
-  uploadedAt: new Date('2026-08-20T08:22:18Z').toISOString(),
-  version: '0.0.6+1',
+  url: 'https://zbswyacaz2jb2esm.public.blob.vercel-storage.com/GharKiList-vbeta_0.0.6%2B2.apk',
+  pathname: 'GharKiList-vbeta_0.0.6+2.apk',
+  size: 28442720,
+  uploadedAt: new Date('2026-08-20T15:36:27Z').toISOString(),
+  version: '0.0.6+2',
   isFallback: true,
 };
 
-export const OLDER_APKS: ApkRelease[] = [
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/download/beta_v0.0.6%2B1/GharKiList-vbeta_0.0.6%2B1.apk',
-    pathname: 'GharKiList-vbeta_0.0.6+1.apk',
-    size: 28323994,
-    uploadedAt: new Date('2026-08-20T08:22:18Z').toISOString(),
-    version: '0.0.6+1',
-    isFallback: false,
-  },
-  {
-    url: 'https://github.com/developershre/gharkilist/releases/download/beta-v0.0.6/GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
-    pathname: 'GharKiList-vbeta_0.0.6-Modern_Phones-64bit.apk',
-    size: 22031124,
-    uploadedAt: new Date('2026-08-19T22:00:00Z').toISOString(),
-    version: '0.0.6',
-    isFallback: false,
-  },
-];
+export const OLDER_APKS: ApkRelease[] = [];
 
 export function parseVersion(pathname: string): string {
   const match = pathname.match(/v?(\d+\.\d+(?:\.\d+)?(?:\+\d+)?(?:-[a-zA-Z0-9.]+)?)/i);
@@ -58,5 +43,28 @@ export function compareVersions(a: string, b: string): number {
 }
 
 export async function getSortedApks(): Promise<ApkRelease[]> {
-  return [FALLBACK_APK, ...OLDER_APKS];
+  try {
+    const db = getDb();
+    const rows = db.prepare("SELECT * FROM apks").all() as any[];
+    
+    const apks: ApkRelease[] = rows.map(row => ({
+      url: row.url,
+      pathname: row.pathname,
+      size: row.size,
+      uploadedAt: row.uploadedAt,
+      version: row.version,
+      isFallback: row.isFallback === 1 || row.url === FALLBACK_APK.url,
+    }));
+
+    if (apks.length === 0) {
+      return [FALLBACK_APK];
+    }
+
+    return apks.sort((a, b) => compareVersions(b.version, a.version));
+  } catch (error) {
+    console.error('Error fetching APKs from SQLite database:', error);
+    return [FALLBACK_APK];
+  }
 }
+
+

@@ -11,14 +11,14 @@ export default function FAQ() {
     {
       q_en: 'Is Gharkilist completely free to use?',
       q_hi: 'क्या घर की लिस्ट ऐप पूरी तरह से मुफ़्त है?',
-      a_en: 'Yes! Gharkilist is currently 100% free to download and use, with zero hidden fees, no subscriptions, and zero ad clutter.',
-      a_hi: 'हाँ! घर की लिस्ट वर्तमान में डाउनलोड और उपयोग करने के लिए 100% मुफ़्त है, जिसमें कोई छिपा हुआ शुल्क, कोई सदस्यता और कोई विज्ञापन नहीं है।',
+      a_en: 'No, Gharkilist is not a free app. It is completely free to download and use only during the testing period. Following the testing phase, a subscription-based model will be implemented for full feature access.',
+      a_hi: 'नहीं, घर की लिस्ट पूरी तरह से मुफ़्त ऐप नहीं है। यह केवल बीटा टेस्टिंग अवधि के दौरान डाउनलोड और उपयोग करने के लिए मुफ़्त है। टेस्टिंग चरण के बाद, इसमें सब्सक्रिप्शन मॉडल लागू किया जाएगा।',
     },
     {
       q_en: 'Does Gharkilist require an internet connection?',
       q_hi: 'क्या ऐप चलाने के लिए इंटरनेट कनेक्शन आवश्यक है?',
-      a_en: 'No! Gharkilist is built 100% offline using a local SQLite database on your device. It works without Wi-Fi or mobile data.',
-      a_hi: 'नहीं! ऐप आपके डिवाइस पर लोकल SQLite डेटाबेस का उपयोग करता है। यह बिना इंटरनेट के 100% काम करता है।',
+      a_en: 'Yes, it requires an internet connection to keep track of analytics and sync your pantry data. However, the app also includes an in-app database. Users can opt to use the app completely free and offline, though exclusive features will not be available.',
+      a_hi: 'हाँ, घर की लिस्ट को आपके डेटा को ट्रैक और सिंक करने के लिए इंटरनेट कनेक्शन की आवश्यकता होती है। यह ऐप इन-ऐप लोकल डेटाबेस के साथ भी आता है जिसे आप चाहें तो पूरी तरह से मुफ़्त और ऑफ़लाइन उपयोग कर सकते हैं, लेकिन तब विशेष फीचर्स उपलब्ध नहीं होंगे।',
     },
     {
       q_en: 'How does 1-Tap Kirana WhatsApp export work?',

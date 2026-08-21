@@ -4,6 +4,7 @@ import { BookOpen, MessageCircle, Layers, ShieldCheck, Scale, Zap } from 'lucide
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/context/LanguageContext';
+import { motion } from 'framer-motion';
 
 export default function FeaturesGrid() {
   const { lang } = useLanguage();
@@ -86,25 +87,34 @@ export default function FeaturesGrid() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, i) => (
-              <Card key={i} className="group bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-slate/10 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald via-mint to-saffron opacity-0 group-hover:opacity-100 transition-opacity" />
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald/5 border border-emerald/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      {feature.icon}
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: i * 0.08, ease: "easeOut" }}
+                className="h-full"
+              >
+                <Card className="group bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-slate/10 overflow-hidden relative h-full">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald via-mint to-saffron opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald/5 border border-emerald/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        {feature.icon}
+                      </div>
+                      <Badge variant="outline" className="text-[10px] border-slate/15">
+                        {lang === 'hi' ? feature.badge_hi : feature.badge_en}
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className="text-[10px] border-slate/15">
-                      {lang === 'hi' ? feature.badge_hi : feature.badge_en}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg font-bold text-slate mb-2">
-                    {lang === 'hi' ? feature.title_hi : feature.title_en}
-                  </CardTitle>
-                  <CardDescription className="text-sm text-slate/60 leading-relaxed">
-                    {lang === 'hi' ? feature.desc_hi : feature.desc_en}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+                    <CardTitle className="text-lg font-bold text-slate mb-2">
+                      {lang === 'hi' ? feature.title_hi : feature.title_en}
+                    </CardTitle>
+                    <CardDescription className="text-sm text-slate/60 leading-relaxed">
+                      {lang === 'hi' ? feature.desc_hi : feature.desc_en}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>

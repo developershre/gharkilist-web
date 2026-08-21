@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import IPhoneMockup from '@/components/IPhoneMockup';
 import AndroidMockup from '@/components/AndroidMockup';
 import { useLanguage } from '@/context/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 interface CartItem {
   id: string;
@@ -238,17 +240,24 @@ export default function PhoneSimulator() {
           </div>
 
           {/* Inventory lists selector pills */}
-          <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-none">
+          <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-none relative">
             {INVENTORY_PILLS.map((pill) => (
               <span
                 key={pill.id}
                 onClick={() => setActivePill(pill.id)}
-                className={`text-[9px] font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap cursor-pointer transition-colors ${
+                className={`relative text-[9px] font-bold px-3.5 py-1.5 rounded-xl whitespace-nowrap cursor-pointer transition-all z-10 ${
                   activePill === pill.id
-                    ? 'bg-[#03B459] text-white shadow-xs'
+                    ? 'text-white'
                     : 'bg-[#FAF9F5] border border-slate-150 text-slate-650'
                 }`}
               >
+                {activePill === pill.id && (
+                  <motion.span
+                    layoutId="activeSimulatorPill"
+                    className="absolute inset-0 bg-[#03B459] rounded-xl -z-10"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
                 {lang === 'hi' ? pill.label_hi : pill.label_en}
               </span>
             ))}
@@ -263,56 +272,65 @@ export default function PhoneSimulator() {
                 <div className="text-[9px] text-slate-400 mt-0.5">{lang === 'hi' ? 'सामान जोड़ने के लिए + दबाएं' : 'Tap + below to add items'}</div>
               </div>
             ) : (
-              currentListItems.map((item: any) => (
-                <div key={item.id} className="bg-white rounded-2xl p-2.5 border border-slate-150 flex items-center justify-between shadow-2xs">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <GripVertical className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                    
-                    <div className={`w-9 h-9 rounded-xl ${item.imgColor} border border-slate-100 flex items-center justify-center text-xs flex-shrink-0 overflow-hidden`}>
-                      {item.isIllustration ? (
-                        <svg className="w-5 h-5 text-amber-600/70" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M5 2h14l1 3v15l-1 2H5l-1-2V5l1-3zm2 4h10v14H7V6z" />
-                        </svg>
-                      ) : (
-                        <span className="text-sm">{item.icon || '🌾'}</span>
-                      )}
-                    </div>
-                    
-                    <div className="min-w-0">
-                      <div className="text-[10.5px] font-bold text-slate-800 truncate font-sans">
-                        {lang === 'hi' ? item.name_hi : item.name_en}
+              <AnimatePresence initial={false}>
+                {currentListItems.map((item: any) => (
+                  <motion.div 
+                    key={item.id}
+                    initial={{ opacity: 0, height: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, height: 'auto', scale: 1 }}
+                    exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                    className="bg-white rounded-2xl p-2.5 border border-slate-150 flex items-center justify-between shadow-2xs overflow-hidden"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <GripVertical className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+                      
+                      <div className={`w-9 h-9 rounded-xl ${item.imgColor} border border-slate-100 flex items-center justify-center text-xs flex-shrink-0 overflow-hidden`}>
+                        {item.isIllustration ? (
+                          <svg className="w-5 h-5 text-amber-600/70" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5 2h14l1 3v15l-1 2H5l-1-2V5l1-3zm2 4h10v14H7V6z" />
+                          </svg>
+                        ) : (
+                          <span className="text-sm">{item.icon || '🌾'}</span>
+                        )}
                       </div>
-                      <div className="text-[8.5px] text-slate-400 font-sans mt-0.5">{item.qty} {item.unit}</div>
+                      
+                      <div className="min-w-0">
+                        <div className="text-[10.5px] font-bold text-slate-800 truncate font-sans">
+                          {lang === 'hi' ? item.name_hi : item.name_en}
+                        </div>
+                        <div className="text-[8.5px] text-slate-400 font-sans mt-0.5">{item.qty} {item.unit}</div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-1.5 flex-shrink-0">
-                    {/* Stepper adjustment inside items list */}
-                    <div className="flex items-center gap-1 border border-slate-100 rounded-lg p-0.5 bg-[#FAF9F5]">
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {/* Stepper adjustment inside items list */}
+                      <div className="flex items-center gap-1 border border-slate-100 rounded-lg p-0.5 bg-[#FAF9F5]">
+                        <button 
+                          onClick={() => updateQty(item.id, -1)}
+                          className="w-5 h-5 rounded-md bg-white border border-slate-200 text-slate-650 flex items-center justify-center hover:bg-slate-50 transition-colors"
+                        >
+                          <Minus className="w-2.5 h-2.5" />
+                        </button>
+                        <span className="w-3 text-center text-[9px] font-bold text-slate-800">{item.qty}</span>
+                        <button 
+                          onClick={() => updateQty(item.id, 1)}
+                          className="w-5 h-5 rounded-md bg-[#03B459] text-white flex items-center justify-center hover:bg-[#03B459]/90 transition-colors"
+                        >
+                          <Plus className="w-2.5 h-2.5" />
+                        </button>
+                      </div>
+                      
                       <button 
-                        onClick={() => updateQty(item.id, -1)}
-                        className="w-5 h-5 rounded-md bg-white border border-slate-200 text-slate-650 flex items-center justify-center hover:bg-slate-50 transition-colors"
+                        onClick={() => deleteItem(item.id)}
+                        className="w-6.5 h-6.5 rounded-lg border border-red-200 flex items-center justify-center bg-red-50 hover:bg-red-100 transition-colors"
                       >
-                        <Minus className="w-2.5 h-2.5" />
-                      </button>
-                      <span className="w-3 text-center text-[9px] font-bold text-slate-800">{item.qty}</span>
-                      <button 
-                        onClick={() => updateQty(item.id, 1)}
-                        className="w-5 h-5 rounded-md bg-[#03B459] text-white flex items-center justify-center hover:bg-[#03B459]/90 transition-colors"
-                      >
-                        <Plus className="w-2.5 h-2.5" />
+                        <Trash2 className="w-3 h-3 text-red-500" />
                       </button>
                     </div>
-                    
-                    <button 
-                      onClick={() => deleteItem(item.id)}
-                      className="w-6.5 h-6.5 rounded-lg border border-red-200 flex items-center justify-center bg-red-50 hover:bg-red-100 transition-colors"
-                    >
-                      <Trash2 className="w-3 h-3 text-red-500" />
-                    </button>
-                  </div>
-                </div>
-              ))
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             )}
           </div>
 
